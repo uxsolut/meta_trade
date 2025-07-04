@@ -2,12 +2,13 @@ from pydantic import BaseModel
 from typing import Optional
 
 # -------------------
-# ORDEM (antigo MercadoFinanceiro)
+# ORDEM (tabela: ordens)
 # -------------------
 
 class OrdemCreate(BaseModel):
     comentario_ordem: str
-    id_robo: Optional[int] = None
+    id_robo_user: Optional[int] = None
+    id_user: Optional[int] = None
     numero_unico: Optional[str] = None
     quantidade: Optional[int] = None
     preco: Optional[float] = None
@@ -15,7 +16,8 @@ class OrdemCreate(BaseModel):
 class Ordem(BaseModel):
     id: int
     comentario_ordem: str
-    id_robo: Optional[int] = None
+    id_robo_user: Optional[int] = None
+    id_user: Optional[int] = None
     numero_unico: Optional[str] = None
     quantidade: Optional[int] = None
     preco: Optional[float] = None
