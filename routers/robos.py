@@ -3,9 +3,9 @@
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from models import Robo
+from models import Robos
 
-router = APIRouter(prefix="/robo", tags=["Robo"])
+router = APIRouter(prefix="/robos", tags=["Robos"])
 
 @router.post("/")
 async def criar_robo(
@@ -16,7 +16,7 @@ async def criar_robo(
 ):
     conteudo = await arquivo.read()
 
-    novo_robo = Robo(
+    novo_robo = Robos(
         nome=nome,
         symbol=symbol,
         arquivo=conteudo
