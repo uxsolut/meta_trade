@@ -11,7 +11,7 @@ class MercadoFinanceiro(Base):
     numero_magico = Column(Integer)
 
 class Robo(Base):
-    __tablename__ = "robo"
+    __tablename__ = "robos"
 
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, nullable=False)

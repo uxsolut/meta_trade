@@ -13,14 +13,14 @@ class MercadoFinanceiro(BaseModel):
     class Config:
         from_attributes = True
 
-class RoboBase(BaseModel):
+class RobosBase(BaseModel):
     nome: str
     symbol: str
 
-class RoboCreate(RoboBase):
+class RobosCreate(RobosBase):
     pass  # o campo 'arquivo' será enviado como UploadFile via rota (não incluído no schema diretamente)
 
-class Robo(BaseModel):
+class Robos(BaseModel):
     id: int
     nome: str
     symbol: str
