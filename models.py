@@ -77,3 +77,20 @@ class RobosDoUser(Base):
     user = relationship("User", back_populates="robos_do_user")
     robo = relationship("Robos", back_populates="robos_do_user")
     ordens = relationship("Ordem", back_populates="robo_user")
+
+
+# -------------------
+# CORRETORAS
+# -------------------
+
+class Corretora(Base):
+    __tablename__ = "corretoras"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, nullable=False)
+    cnpj = Column(String, nullable=True)
+    telefone = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+
+    # relacionamento reverso (opcional)
+    users = relationship("User", backref="corretora")
