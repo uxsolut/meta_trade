@@ -11,7 +11,7 @@ def criar_ordem(
     item: schemas.OrdemCreate,
     db: Session = Depends(get_db)
 ):
-    nova_ordem = models.Ordem(**item.dict())
+    nova_ordem = models.Ordem(**item.dict(exclude_unset=True))
     db.add(nova_ordem)
     db.commit()
     db.refresh(nova_ordem)

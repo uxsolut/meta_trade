@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from io import BytesIO
 
 from database import get_db
-from models import Robos
+import models
 
 router = APIRouter(prefix="/robos", tags=["Robos"])
 
@@ -18,7 +18,7 @@ async def criar_robo(
 ):
     conteudo = await arquivo.read()
 
-    novo_robo = Robos(
+    novo_robo = models.Robos(
         nome=nome,
         symbol=symbol,
         numero_magico=numero_magico,
@@ -29,11 +29,12 @@ async def criar_robo(
     db.commit()
     db.refresh(novo_robo)
 
-    return {"mensagem": "Robo criado com sucesso", "id": novo_robo.id}
+    return {"mensagem": "Robô criado com sucesso", "id": novo_robo.id}
+
 
 @router.get("/download/{id}")
 def download_robo(id: int, db: Session = Depends(get_db)):
-    robo = db.query(Robos).filter(Robos.id == id).first()
+    robo = db.query(models.Robos).filter(models.Robos.id == id).first()
 
     if not robo:
         raise HTTPException(status_code=404, detail="Robô não encontrado")
@@ -41,5 +42,5 @@ def download_robo(id: int, db: Session = Depends(get_db)):
     return StreamingResponse(
         BytesIO(robo.arquivo),
         media_type="application/octet-stream",
-        headers={"Content-Disposition": f"attachment; filename={robo.nome}"}
+        headers={"Content-Disposition": f"attachment; filename={robo.nome}.ex5"}
     )

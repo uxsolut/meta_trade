@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
+
 # -------------------
 # ORDEM (tabela: ordens)
 # -------------------
@@ -25,6 +26,7 @@ class Ordem(BaseModel):
     class Config:
         from_attributes = True
 
+
 # -------------------
 # ROBOS
 # -------------------
@@ -35,7 +37,7 @@ class RobosBase(BaseModel):
     numero_magico: Optional[int] = None
 
 class RobosCreate(RobosBase):
-    pass  # 'arquivo' continua sendo enviado como UploadFile, fora do schema
+    pass  # arquivo continua vindo por UploadFile
 
 class Robos(BaseModel):
     id: int
@@ -45,6 +47,7 @@ class Robos(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 # -------------------
 # USERS
@@ -67,6 +70,7 @@ class User(BaseModel):
     class Config:
         from_attributes = True
 
+
 # -------------------
 # ROBOS_DO_USER
 # -------------------
@@ -75,7 +79,7 @@ class RoboDoUserCreate(BaseModel):
     id_user: int
     id_robo: int
     id_resultados: Optional[int] = None
-    # O campo `arquivo_cliente` será enviado como UploadFile, não vai no schema diretamente
+    # arquivo_cliente continua fora, pois é UploadFile
 
 class RoboDoUser(BaseModel):
     id: int
