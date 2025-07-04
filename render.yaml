@@ -6,4 +6,4 @@ services:
     startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
     envVars:
       - key: DATABASE_URL
-        value: postgresql://usuario:senha@host:5432/banco
+        value: postgresql://meta_user:F38PVqnnMUsHwJ97egdD0W7rYLIbHL5Q@dpg-d1jsf6vdiees73cgfqf0-a.virginia-postgres.render.com/meta_trade
