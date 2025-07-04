@@ -10,7 +10,7 @@ class MercadoFinanceiro(Base):
     comentario_ordem = Column(Text, nullable=False)
     numero_magico = Column(Integer)
 
-class Robo(Base):
+class Robos(Base):
     __tablename__ = "robos"
 
     id = Column(Integer, primary_key=True, index=True)
