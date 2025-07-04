@@ -11,6 +11,7 @@ def criar_ordem(
     item: schemas.OrdemCreate,
     db: Session = Depends(get_db)
 ):
+    # `exclude_unset=True` garante que apenas os campos enviados no payload sejam usados
     nova_ordem = models.Ordem(**item.dict(exclude_unset=True))
     db.add(nova_ordem)
     db.commit()

@@ -1,7 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
-
 # -------------------
 # ORDEM (tabela: ordens)
 # -------------------
@@ -13,6 +12,7 @@ class OrdemCreate(BaseModel):
     numero_unico: Optional[str] = None
     quantidade: Optional[int] = None
     preco: Optional[float] = None
+    conta_meta_trader: Optional[str] = None  # ✅ NOVO CAMPO
 
 class Ordem(BaseModel):
     id: int
@@ -22,10 +22,10 @@ class Ordem(BaseModel):
     numero_unico: Optional[str] = None
     quantidade: Optional[int] = None
     preco: Optional[float] = None
+    conta_meta_trader: Optional[str] = None  # ✅ NOVO CAMPO
 
     class Config:
         from_attributes = True
-
 
 # -------------------
 # ROBOS
@@ -48,7 +48,6 @@ class Robos(BaseModel):
     class Config:
         from_attributes = True
 
-
 # -------------------
 # USERS
 # -------------------
@@ -69,7 +68,6 @@ class User(BaseModel):
 
     class Config:
         from_attributes = True
-
 
 # -------------------
 # ROBOS_DO_USER
