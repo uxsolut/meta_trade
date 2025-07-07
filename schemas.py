@@ -93,3 +93,33 @@ class RoboDoUser(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# -------------------
+# REQUISICOES
+# -------------------
+
+from typing import List  # já deve estar importado, mas inclui por segurança
+
+class RequisicaoCreate(BaseModel):
+    tipo: str
+    comentario_ordem: Optional[str] = None
+    symbol: Optional[str] = None
+    quantidade: Optional[int] = None
+    preco: Optional[float] = None
+    id_robo: Optional[int] = None
+    ids_robo_user: Optional[List[int]] = None
+
+class Requisicao(BaseModel):
+    id: int
+    tipo: str
+    comentario_ordem: Optional[str] = None
+    symbol: Optional[str] = None
+    quantidade: Optional[int] = None
+    preco: Optional[float] = None
+    id_robo: Optional[int] = None
+    ids_robo_user: Optional[List[int]] = None
+    criado_em: Optional[str] = None
+
+    class Config:
+        from_attributes = True

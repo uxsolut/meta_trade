@@ -1,4 +1,16 @@
-from sqlalchemy import Column, Integer, Text, String, LargeBinary, DateTime, ForeignKey, Numeric
+from sqlalchemy import (
+    Column,
+    Integer,
+    Text,
+    String,
+    LargeBinary,
+    DateTime,
+    ForeignKey,
+    Numeric,
+    Boolean,
+    Table,
+    ARRAY,
+)
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database import Base
@@ -17,11 +29,10 @@ class Ordem(Base):
     numero_unico = Column(String)
     quantidade = Column(Integer)
     preco = Column(Numeric)
-    conta_meta_trader = Column(String, nullable=True)  # ✅ já estava adicionado
-    tipo = Column(String, nullable=True)               # ✅ já estava adicionado
-    criado_em = Column(DateTime, default=datetime.utcnow)  # ✅ já estava adicionado
+    conta_meta_trader = Column(String, nullable=True)
+    tipo = Column(String, nullable=True)
+    criado_em = Column(DateTime, default=datetime.utcnow)
 
-    # relacionamentos (opcional, mas útil)
     robo_user = relationship("RobosDoUser", back_populates="ordens", lazy="joined")
     user = relationship("User", back_populates="ordens", lazy="joined")
 
@@ -36,11 +47,9 @@ class Robos(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, nullable=False)
     symbol = Column(String, nullable=False)
-    # numero_magico removido aqui ✅
     arquivo = Column(LargeBinary, nullable=False)
     criado_em = Column(DateTime, default=datetime.utcnow)
 
-    # relacionamento reverso (opcional)
     robos_do_user = relationship("RobosDoUser", back_populates="robo")
 
 
@@ -58,7 +67,6 @@ class User(Base):
     cpf = Column(String, nullable=True)
     id_corretora = Column(Integer, ForeignKey("corretoras.id"), nullable=True)
 
-    # relacionamentos (opcional)
     ordens = relationship("Ordem", back_populates="user")
     robos_do_user = relationship("RobosDoUser", back_populates="user")
 
@@ -73,10 +81,16 @@ class RobosDoUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     id_user = Column(Integer, ForeignKey("users.id"), nullable=False)
     id_robo = Column(Integer, ForeignKey("robos.id"), nullable=False)
-    id_resultados = Column(Integer, ForeignKey("resultados.id"), nullable=True)
     arquivo_cliente = Column(LargeBinary, nullable=True)
 
-    # relacionamentos (opcional)
+    ligado = Column(Boolean, default=False)
+    ativo = Column(Boolean, default=True)
+    tem_requisicao = Column(Boolean, default=False)
+
+    id_ordem = Column(Integer, ForeignKey("ordens.id"), nullable=True)
+    id_carteira = Column(Integer, ForeignKey("carteiras.id"), nullable=True)
+    id_corretora = Column(Integer, ForeignKey("corretoras.id"), nullable=True)
+
     user = relationship("User", back_populates="robos_do_user")
     robo = relationship("Robos", back_populates="robos_do_user")
     ordens = relationship("Ordem", back_populates="robo_user")
@@ -95,5 +109,27 @@ class Corretora(Base):
     telefone = Column(String, nullable=True)
     email = Column(String, nullable=True)
 
-    # relacionamento reverso (opcional)
     users = relationship("User", backref="corretora")
+
+
+# -------------------
+# REQUISICOES
+# -------------------
+
+class Requisicao(Base):
+    __tablename__ = "requisicoes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tipo = Column(String, nullable=False)
+    comentario_ordem = Column(Text, nullable=True)
+    symbol = Column(String, nullable=True)
+    quantidade = Column(Integer, nullable=True)
+    preco = Column(Numeric(12, 2), nullable=True)
+
+    id_robo = Column(Integer, ForeignKey("robos.id"), nullable=True)
+    ids_robo_user = Column(ARRAY(Integer), nullable=True)  # array de ids, FK lógica
+
+    criado_em = Column(DateTime, default=datetime.utcnow)
+
+    # relacionamento (opcional)
+    robo = relationship("Robos")
