@@ -30,6 +30,7 @@ class Ordem(BaseModel):
     class Config:
         from_attributes = True
 
+
 # -------------------
 # ROBOS
 # -------------------
@@ -37,7 +38,7 @@ class Ordem(BaseModel):
 class RobosBase(BaseModel):
     nome: str
     symbol: str
-    numero_magico: Optional[int] = None
+    # numero_magico removido ✅
 
 class RobosCreate(RobosBase):
     pass  # arquivo continua vindo por UploadFile
@@ -46,10 +47,11 @@ class Robos(BaseModel):
     id: int
     nome: str
     symbol: str
-    numero_magico: Optional[int] = None
+    # numero_magico removido ✅
 
     class Config:
         from_attributes = True
+
 
 # -------------------
 # USERS
@@ -71,6 +73,7 @@ class User(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 # -------------------
 # ROBOS_DO_USER

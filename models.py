@@ -18,8 +18,8 @@ class Ordem(Base):
     quantidade = Column(Integer)
     preco = Column(Numeric)
     conta_meta_trader = Column(String, nullable=True)  # ✅ já estava adicionado
-    tipo = Column(String, nullable=True)               # ✅ NOVO CAMPO
-    criado_em = Column(DateTime, default=datetime.utcnow)  # ✅ NOVO CAMPO
+    tipo = Column(String, nullable=True)               # ✅ já estava adicionado
+    criado_em = Column(DateTime, default=datetime.utcnow)  # ✅ já estava adicionado
 
     # relacionamentos (opcional, mas útil)
     robo_user = relationship("RobosDoUser", back_populates="ordens", lazy="joined")
@@ -36,7 +36,7 @@ class Robos(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, nullable=False)
     symbol = Column(String, nullable=False)
-    numero_magico = Column(Integer)
+    # numero_magico removido aqui ✅
     arquivo = Column(LargeBinary, nullable=False)
     criado_em = Column(DateTime, default=datetime.utcnow)
 
