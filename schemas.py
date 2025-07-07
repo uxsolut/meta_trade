@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
+from datetime import datetime  # ✅ import necessário
 
 # -------------------
 # ORDEM (tabela: ordens)
@@ -12,8 +13,8 @@ class OrdemCreate(BaseModel):
     numero_unico: Optional[str] = None
     quantidade: Optional[int] = None
     preco: Optional[float] = None
-    conta_meta_trader: Optional[str] = None  # ✅ novo
-    tipo: Optional[str] = None               # ✅ novo
+    conta_meta_trader: Optional[str] = None
+    tipo: Optional[str] = None
 
 class Ordem(BaseModel):
     id: int
@@ -23,9 +24,9 @@ class Ordem(BaseModel):
     numero_unico: Optional[str] = None
     quantidade: Optional[int] = None
     preco: Optional[float] = None
-    conta_meta_trader: Optional[str] = None  # ✅ novo
-    tipo: Optional[str] = None               # ✅ novo
-    criado_em: Optional[str] = None          # ✅ novo
+    conta_meta_trader: Optional[str] = None
+    tipo: Optional[str] = None
+    criado_em: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -38,16 +39,14 @@ class Ordem(BaseModel):
 class RobosBase(BaseModel):
     nome: str
     symbol: str
-    # numero_magico removido ✅
 
 class RobosCreate(RobosBase):
-    pass  # arquivo continua vindo por UploadFile
+    pass
 
 class Robos(BaseModel):
     id: int
     nome: str
     symbol: str
-    # numero_magico removido ✅
 
     class Config:
         from_attributes = True
@@ -88,7 +87,6 @@ class RoboDoUserCreate(BaseModel):
     id_ordem: Optional[int] = None
     id_carteira: Optional[int] = None
     id_corretora: Optional[int] = None
-    # arquivo_cliente continua fora, pois é UploadFile
 
 class RoboDoUser(BaseModel):
     id: int
@@ -127,7 +125,7 @@ class Requisicao(BaseModel):
     preco: Optional[float] = None
     id_robo: Optional[int] = None
     ids_robo_user: Optional[List[int]] = None
-    criado_em: Optional[str] = None
+    criado_em: Optional[datetime] = None  # ✅ ALTERADO PARA datetime
 
     class Config:
-        from_attributes = True
+        orm_mode = True  # ✅ NECESSÁRIO PARA DATETIME FUNCIONAR
