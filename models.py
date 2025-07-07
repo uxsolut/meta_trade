@@ -17,7 +17,9 @@ class Ordem(Base):
     numero_unico = Column(String)
     quantidade = Column(Integer)
     preco = Column(Numeric)
-    conta_meta_trader = Column(String, nullable=True)  # ✅ CAMPO NOVO ADICIONADO AQUI
+    conta_meta_trader = Column(String, nullable=True)  # ✅ já estava adicionado
+    tipo = Column(String, nullable=True)               # ✅ NOVO CAMPO
+    criado_em = Column(DateTime, default=datetime.utcnow)  # ✅ NOVO CAMPO
 
     # relacionamentos (opcional, mas útil)
     robo_user = relationship("RobosDoUser", back_populates="ordens", lazy="joined")
