@@ -12,7 +12,8 @@ class OrdemCreate(BaseModel):
     numero_unico: Optional[str] = None
     quantidade: Optional[int] = None
     preco: Optional[float] = None
-    conta_meta_trader: Optional[str] = None  # ✅ NOVO CAMPO
+    conta_meta_trader: Optional[str] = None  # ✅ novo
+    tipo: Optional[str] = None               # ✅ novo
 
 class Ordem(BaseModel):
     id: int
@@ -22,7 +23,9 @@ class Ordem(BaseModel):
     numero_unico: Optional[str] = None
     quantidade: Optional[int] = None
     preco: Optional[float] = None
-    conta_meta_trader: Optional[str] = None  # ✅ NOVO CAMPO
+    conta_meta_trader: Optional[str] = None  # ✅ novo
+    tipo: Optional[str] = None               # ✅ novo
+    criado_em: Optional[str] = None          # ✅ novo
 
     class Config:
         from_attributes = True
