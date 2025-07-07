@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 
 # -------------------
 # ORDEM (tabela: ordens)
@@ -82,14 +82,24 @@ class User(BaseModel):
 class RoboDoUserCreate(BaseModel):
     id_user: int
     id_robo: int
-    id_resultados: Optional[int] = None
+    ligado: Optional[bool] = False
+    ativo: Optional[bool] = False
+    tem_requisicao: Optional[bool] = False
+    id_ordem: Optional[int] = None
+    id_carteira: Optional[int] = None
+    id_corretora: Optional[int] = None
     # arquivo_cliente continua fora, pois é UploadFile
 
 class RoboDoUser(BaseModel):
     id: int
     id_user: int
     id_robo: int
-    id_resultados: Optional[int] = None
+    ligado: Optional[bool] = False
+    ativo: Optional[bool] = False
+    tem_requisicao: Optional[bool] = False
+    id_ordem: Optional[int] = None
+    id_carteira: Optional[int] = None
+    id_corretora: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -98,8 +108,6 @@ class RoboDoUser(BaseModel):
 # -------------------
 # REQUISICOES
 # -------------------
-
-from typing import List  # já deve estar importado, mas inclui por segurança
 
 class RequisicaoCreate(BaseModel):
     tipo: str

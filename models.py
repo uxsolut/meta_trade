@@ -84,7 +84,7 @@ class RobosDoUser(Base):
     arquivo_cliente = Column(LargeBinary, nullable=True)
 
     ligado = Column(Boolean, default=False)
-    ativo = Column(Boolean, default=True)
+    ativo = Column(Boolean, default=False)  # atualizado para default=False conforme sua instrução
     tem_requisicao = Column(Boolean, default=False)
 
     id_ordem = Column(Integer, ForeignKey("ordens.id"), nullable=True)

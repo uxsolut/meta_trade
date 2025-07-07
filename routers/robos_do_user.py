@@ -10,7 +10,12 @@ router = APIRouter(prefix="/robos_do_user", tags=["Robôs do Usuário"])
 async def criar_robo_do_user(
     id_user: int = Form(...),
     id_robo: int = Form(...),
-    id_resultados: int = Form(None),
+    ligado: bool = Form(False),
+    ativo: bool = Form(False),
+    tem_requisicao: bool = Form(False),
+    id_ordem: int = Form(None),
+    id_carteira: int = Form(None),
+    id_corretora: int = Form(None),
     arquivo_cliente: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
@@ -19,7 +24,12 @@ async def criar_robo_do_user(
     novo = RobosDoUser(
         id_user=id_user,
         id_robo=id_robo,
-        id_resultados=id_resultados,
+        ligado=ligado,
+        ativo=ativo,
+        tem_requisicao=tem_requisicao,
+        id_ordem=id_ordem,
+        id_carteira=id_carteira,
+        id_corretora=id_corretora,
         arquivo_cliente=conteudo
     )
 
@@ -27,4 +37,6 @@ async def criar_robo_do_user(
     db.commit()
     db.refresh(novo)
 
-    return JSONResponse(content={"mensagem": "Robô vinculado ao usuário com sucesso", "id": novo.id})
+    return JSONResponse(
+        content={"mensagem": "Robô vinculado ao usuário com sucesso", "id": novo.id}
+    )
