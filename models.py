@@ -33,8 +33,19 @@ class Ordem(Base):
     tipo = Column(String, nullable=True)
     criado_em = Column(DateTime, default=datetime.utcnow)
 
-    robo_user = relationship("RobosDoUser", back_populates="ordens", lazy="joined")
-    user = relationship("User", back_populates="ordens", lazy="joined")
+    # Especifique a FK para RobosDoUser
+    robo_user = relationship(
+        "RobosDoUser",
+        back_populates="ordens",
+        foreign_keys=[id_robo_user],     # <---
+        lazy="joined"
+    )
+
+    user = relationship(
+        "User",
+        back_populates="ordens",
+        lazy="joined"
+    )
 
 
 # -------------------
@@ -84,7 +95,7 @@ class RobosDoUser(Base):
     arquivo_cliente = Column(LargeBinary, nullable=True)
 
     ligado = Column(Boolean, default=False)
-    ativo = Column(Boolean, default=False)  # atualizado para default=False conforme sua instrução
+    ativo = Column(Boolean, default=False)
     tem_requisicao = Column(Boolean, default=False)
 
     id_ordem = Column(Integer, ForeignKey("ordens.id"), nullable=True)
@@ -93,7 +104,13 @@ class RobosDoUser(Base):
 
     user = relationship("User", back_populates="robos_do_user")
     robo = relationship("Robos", back_populates="robos_do_user")
-    ordens = relationship("Ordem", back_populates="robo_user")
+
+    # Especifique a FK para Ordens
+    ordens = relationship(
+        "Ordem",
+        back_populates="robo_user",
+        foreign_keys="[Ordem.id_robo_user]"     # <---
+    )
 
 
 # -------------------
