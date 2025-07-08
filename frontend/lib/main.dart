@@ -11,6 +11,7 @@ import 'dart:html' as html;
 void main() {
   // Registrar botão Google Sign-In para Web
   if (kIsWeb) {
+    // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(
       'google-signin-button',
       (int viewId) {
