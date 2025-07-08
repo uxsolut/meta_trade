@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:ui' as ui;
+import 'dart:html' as html;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -43,7 +45,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     ));
     
     _fadeAnimationController.forward();
+
+    if (kIsWeb) {
+    html.window.addEventListener('google-signin', (event) {
+      final credential = (event as html.CustomEvent).detail;
+      _showSnackBar('Login Google Web JWT recebido!');
+      // Aqui você pode enviar o credential para o backend ou salvar no storage
+      print("Google JWT: $credential");
+    });
   }
+}
 
   @override
   void dispose() {
@@ -375,26 +386,32 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         
                         // Botões de login social
                         Row(
-                          children: [
-                            // Google
-                            Expanded(
-                              child: _buildSocialButton(
-                              'Google',
-                              Icons.g_mobiledata,
-                              _handleGoogleSignIn, // <-- Troque para chamar direto seu método
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            // Apple
-                            Expanded(
-                              child: _buildSocialButton(
-                                'Apple',
-                                Icons.apple,
-                                () => _handleSocialLogin('Apple'),
-                              ),
-                            ),
-                          ],
-                        ),
+  children: [
+    // Google
+    Expanded(
+      child: kIsWeb
+        ? const SizedBox(
+            height: 50,
+            child: HtmlElementView(viewType: 'google-signin-button'),
+          )
+        : _buildSocialButton(
+            'Google',
+            Icons.g_mobiledata,
+            _handleGoogleSignIn,
+          ),
+    ),
+    const SizedBox(width: 16),
+    // Apple
+    Expanded(
+      child: _buildSocialButton(
+        'Apple',
+        Icons.apple,
+        () => _handleSocialLogin('Apple'),
+      ),
+    ),
+  ],
+),
+
                         
                         const SizedBox(height: 40),
                         
