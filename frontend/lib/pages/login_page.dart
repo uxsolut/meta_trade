@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -475,28 +478,43 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _handleLogin() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+    final email = _emailController.text.trim();
+    final senha = _passwordController.text;
+
+    if (email.isEmpty || senha.isEmpty) {
       _showSnackBar('Por favor, preencha todos os campos');
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    HapticFeedback.lightImpact();
+    try {
+      final response = await http.post(
+        Uri.parse('https://meta-trade.onrender.com/users/login'), // Troque para sua URL da API se for diferente
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({"email": email, "senha": senha}),
+      );
 
-    // Simular login
-    await Future.delayed(const Duration(seconds: 2));
+      setState(() => _isLoading = false);
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    _showSnackBar('Login realizado com sucesso!');
-    
-    // TODO: Implementar lógica de login real
-    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardPage()));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        _showSnackBar('Login realizado com sucesso!');
+      
+      } else {
+        String errorMsg = 'Erro ao fazer login';
+        try {
+          final body = jsonDecode(response.body);
+          if (body is Map && body.containsKey('detail')) {
+            errorMsg = body['detail'].toString();
+          }
+        } catch (_) {}
+        _showSnackBar(errorMsg);
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showSnackBar('Erro de conexão com o servidor');
+    }
   }
 
   void _handleSocialLogin(String provider) {
