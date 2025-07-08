@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'pages/homepage.dart'; // Sua Home
+import 'pages/dashboard_page.dart'; // <--- Importe a nova página aqui
 import 'package:google_sign_in/google_sign_in.dart';
 
 // Importações específicas para Web
@@ -49,8 +50,13 @@ class GestorCapitaisApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'SF Pro Display',
       ),
-      home: const MobileHomePage(), // Sua homepage.dart
+      home: const MobileHomePage(), // Continua iniciando pela homepage
       debugShowCheckedModeBanner: false,
+      // Rotas registradas para navegação por nome
+      routes: {
+        '/home': (context) => const MobileHomePage(),
+        '/dashboard': (context) => DashboardPage(),
+      },
     );
   }
 }

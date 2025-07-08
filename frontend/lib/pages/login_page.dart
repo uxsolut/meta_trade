@@ -532,10 +532,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       setState(() => _isLoading = false);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        _showSnackBar('Login realizado com sucesso!');
-      
-      } else {
+  final data = jsonDecode(response.body);
+  _showSnackBar('Login realizado com sucesso!');
+
+  // Aguarda um pouco para mostrar o snackbar, depois navega
+  await Future.delayed(const Duration(milliseconds: 500));
+  if (!mounted) return;
+  Navigator.pushReplacementNamed(context, '/dashboard');
+  
+} else {
         String errorMsg = 'Erro ao fazer login';
         try {
           final body = jsonDecode(response.body);
