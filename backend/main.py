@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import models as models
 from database import engine
 from routers import ordem, robos, users, robos_do_user, requisicoes  # <- novos imports
@@ -6,6 +7,15 @@ from routers import ordem, robos, users, robos_do_user, requisicoes  # <- novos 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# Adicione este bloco para liberar CORS para qualquer origem (Ajuste em produção!)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Em produção, troque para o domínio do seu frontend!
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
