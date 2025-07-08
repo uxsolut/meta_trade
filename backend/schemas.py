@@ -125,3 +125,20 @@ class Requisicao(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# -------------------
+# LOGIN
+# -------------------
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    senha: str
+
+class UserLoginResponse(BaseModel):
+    id: int
+    nome: str
+    email: EmailStr
+    cpf: Optional[str] = None
+    id_corretora: Optional[int] = None
+
