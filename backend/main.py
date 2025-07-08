@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-import models
+import models as models
 from database import engine
 from routers import ordem, robos, users, robos_do_user, requisicoes  # <- novos imports
 

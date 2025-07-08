@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
-from datetime import datetime  # ✅ import necessário
+from datetime import datetime
 
 # -------------------
 # ORDEM (tabela: ordens)
@@ -26,11 +26,10 @@ class Ordem(BaseModel):
     preco: Optional[float] = None
     conta_meta_trader: Optional[str] = None
     tipo: Optional[str] = None
-    criado_em: Optional[str] = None
+    criado_em: Optional[datetime] = None
 
     class Config:
         from_attributes = True
-
 
 # -------------------
 # ROBOS
@@ -50,7 +49,6 @@ class Robos(BaseModel):
 
     class Config:
         from_attributes = True
-
 
 # -------------------
 # USERS
@@ -72,7 +70,6 @@ class User(BaseModel):
 
     class Config:
         from_attributes = True
-
 
 # -------------------
 # ROBOS_DO_USER
@@ -102,7 +99,6 @@ class RoboDoUser(BaseModel):
     class Config:
         from_attributes = True
 
-
 # -------------------
 # REQUISICOES
 # -------------------
@@ -125,7 +121,7 @@ class Requisicao(BaseModel):
     preco: Optional[float] = None
     id_robo: Optional[int] = None
     ids_robo_user: Optional[List[int]] = None
-    criado_em: Optional[datetime] = None  # ✅ ALTERADO PARA datetime
+    criado_em: Optional[datetime] = None
 
     class Config:
-        orm_mode = True  # ✅ NECESSÁRIO PARA DATETIME FUNCIONAR
+        from_attributes = True

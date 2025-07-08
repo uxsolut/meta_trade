@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from io import BytesIO
 
 from database import get_db
-import models
+import models as models
 
 router = APIRouter(prefix="/robos", tags=["Robos"])
 
