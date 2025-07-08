@@ -3,17 +3,15 @@ import 'package:flutter/material.dart';
 import 'pages/homepage.dart'; // Sua Home
 import 'package:google_sign_in/google_sign_in.dart';
 
-// Importa apenas se rodando no Web
+// Importações específicas para Web
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import 'dart:ui' as ui
-    if (dart.library.html) 'dart:ui_web.dart';
+import 'dart:ui_web' as ui_web; // <- O correto para acessar o platformViewRegistry na web
 
 void main() {
   // Registrar botão Google Sign-In para Web
   if (kIsWeb) {
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
+    ui_web.platformViewRegistry.registerViewFactory(
       'google-signin-button',
       (int viewId) {
         final elem = html.DivElement()
