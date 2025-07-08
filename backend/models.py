@@ -153,11 +153,14 @@ class Requisicao(Base):
 
 
 # -------------------
-# CARTEIRA (básico)
+# CARTEIRA
 # -------------------
 
 class Carteira(Base):
     __tablename__ = "carteiras"
+
     id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String, nullable=False)
-    id_user = Column(Integer, ForeignKey("users.id"), nullable=False)
+    nome = Column(Text, nullable=False)
+    id_user = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    user = relationship("User", backref="carteiras")

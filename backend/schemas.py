@@ -142,3 +142,15 @@ class UserLoginResponse(BaseModel):
     cpf: Optional[str] = None
     id_corretora: Optional[int] = None
 
+
+# -------------------
+# CARTEIRAS
+# -------------------
+
+class CarteiraResponse(BaseModel):
+    id: int
+    nome: str
+    id_user: int
+
+    class Config:
+        from_attributes = True

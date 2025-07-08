@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import models as models
 from database import engine
-from routers import ordem, robos, users, robos_do_user, requisicoes  # <- novos imports
+from routers import ordem, robos, users, robos_do_user, requisicoes, carteiras  # <- novos imports
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -26,6 +26,7 @@ app.include_router(robos.router)
 app.include_router(users.router)          
 app.include_router(robos_do_user.router)  
 app.include_router(requisicoes.router)
+app.include_router(carteiras.router)
 
 import os
 
