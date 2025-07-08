@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:google_sign_in/google_sign_in.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -19,6 +20,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email'],
+  );
 
   @override
   void initState() {
@@ -374,9 +379,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             // Google
                             Expanded(
                               child: _buildSocialButton(
-                                'Google',
-                                Icons.g_mobiledata,
-                                () => _handleSocialLogin('Google'),
+                              'Google',
+                              Icons.g_mobiledata,
+                              _handleGoogleSignIn, // <-- Troque para chamar direto seu método
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -475,6 +480,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      final account = await _googleSignIn.signIn();
+      if (account != null) {
+        _showSnackBar('Bem-vindo, ${account.displayName ?? account.email}');
+        // Aqui você pode fazer um POST para seu backend, se desejar
+      }
+    } catch (error) {
+      _showSnackBar('Erro ao logar com Google');
+    }
   }
 
   void _handleLogin() async {

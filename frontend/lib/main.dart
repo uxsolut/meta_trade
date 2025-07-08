@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart'; // <-- Adicione esta linha!
 import 'pages/homepage.dart'; // Novo arquivo com o conteúdo que saiu do main
 
 void main() {
@@ -21,3 +22,10 @@ class GestorCapitaisApp extends StatelessWidget {
     );
   }
 }
+
+// Exemplo: instanciando GoogleSignIn (você pode usar em qualquer lugar)
+final GoogleSignIn googleSignIn = GoogleSignIn(
+  scopes: [
+    'email',
+  ],
+);
