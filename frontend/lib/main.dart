@@ -5,8 +5,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 // Importa apenas se rodando no Web
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:ui' as ui;
 import 'dart:html' as html;
+import 'dart:ui' as ui
+    if (dart.library.html) 'dart:ui_web.dart';
 
 void main() {
   // Registrar botão Google Sign-In para Web
