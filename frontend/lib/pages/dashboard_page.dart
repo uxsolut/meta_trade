@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import '../models/carteira.dart';
+import 'package:http/http.dart' as http;
+import '../models/carteira_model.dart';
 import '../services/carteira_service.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -16,27 +17,31 @@ class _DashboardPageState extends State<DashboardPage> {
   bool showNotifications = false;
   bool showSettings = false;
   bool isEditing = false;
-  bool showAddCarteira = false;
+  bool showAddWallet = false;
   bool showAddAccount = false;
 
-  // Dados das carteiras
-  List<Carteira> carteiras = [];
+  // Instância do serviço de carteira
+  late CarteiraService _carteiraService;
+
+  // Lista de carteiras reais
+  List<Carteira> _carteiras = [];
 
   @override
   void initState() {
     super.initState();
-    carregarCarteiras();
+    _carteiraService = CarteiraService(baseUrl: 'http://localhost:8080'); // Ajuste a URL base conforme necessário
+    _fetchCarteiras();
   }
 
-  void carregarCarteiras() async {
+  Future<void> _fetchCarteiras() async {
     try {
-      final service = CarteiraService(baseUrl: 'http://localhost:8000'); // ou sua URL real
-      final dados = await service.getCarteiras();
+      final fetchedCarteiras = await _carteiraService.getCarteiras();
       setState(() {
-        carteiras = dados;
+        _carteiras = fetchedCarteiras;
       });
     } catch (e) {
       print('Erro ao carregar carteiras: $e');
+      // Tratar erro, talvez mostrar uma mensagem para o usuário
     }
   }
 
@@ -243,7 +248,8 @@ class _DashboardPageState extends State<DashboardPage> {
     ),
   ];
 
-  Carteira? selectedCarteira;
+  // Modificado para usar Carteira do carteira_model.dart
+  Carteira? selectedWallet;
   Broker? selectedBroker;
   Strategy? selectedStrategy;
 
@@ -253,9 +259,9 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  void navigateToCarteiras() {
+  void navigateToWallets() {
     setState(() {
-      currentView = 'carteiras';
+      currentView = 'wallets';
       breadcrumb = ['Dashboard', 'Carteiras'];
     });
   }
@@ -267,11 +273,24 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
+  // Modificado para usar Carteira do carteira_model.dart
   void navigateToBrokers(Carteira carteira) {
     setState(() {
-      selectedCarteira = carteira;
+      // Aqui você precisaria de uma forma de mapear Carteira para Wallet
+      // ou adaptar a lógica para usar diretamente Carteira.
+      // Por simplicidade, vou criar uma Wallet temporária para manter a estrutura.
+      selectedWallet = Wallet(
+        id: carteira.id,
+        name: carteira.nome,
+        balance: 'R\$ 0,00', // Dados fictícios, pois Carteira não tem balance
+        change: '+0.0%',
+        isPositive: true,
+        color: Color(0xFF10B981),
+        performance: 0,
+        brokers: [], // Dados fictícios, pois Carteira não tem brokers
+      );
       currentView = 'brokers';
-      breadcrumb = ['Dashboard', 'Carteiras', carteira.name];
+      breadcrumb = ['Dashboard', 'Carteiras', carteira.nome];
     });
   }
 
@@ -279,7 +298,7 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() {
       selectedBroker = broker;
       currentView = 'accounts';
-      breadcrumb = ['Dashboard', 'Carteiras', selectedCarteira!.name, broker.name];
+      breadcrumb = ['Dashboard', 'Carteiras', selectedWallet!.name, broker.name];
     });
   }
 
@@ -338,7 +357,7 @@ class _DashboardPageState extends State<DashboardPage> {
       if (newBreadcrumb.length == 1) {
         // Dashboard
         currentView = 'dashboard';
-        selectedCarteira = null;
+        selectedWallet = null;
         selectedBroker = null;
         selectedStrategy = null;
         selectedIndex = 0;
@@ -349,11 +368,11 @@ class _DashboardPageState extends State<DashboardPage> {
         selectedStrategy = null;
 
         if (secondLevel == 'Carteiras') {
-          currentView = 'carteiras';
-          selectedCarteira = null;
+          currentView = 'wallets';
+          selectedWallet = null;
         } else if (secondLevel == 'Corretoras') {
           currentView = 'allBrokers';
-          selectedCarteira = null;
+          selectedWallet = null;
         } else if (secondLevel == 'Operações') {
           currentView = 'strategies';
           selectedIndex = 2;
@@ -390,11 +409,11 @@ class _DashboardPageState extends State<DashboardPage> {
 
         if (newBreadcrumb.length == 1) {
           currentView = 'dashboard';
-          selectedCarteira = null;
+          selectedWallet = null;
           selectedBroker = null;
           selectedStrategy = null;
         } else if (newBreadcrumb[newBreadcrumb.length - 1] == 'Carteiras') {
-          currentView = 'carteiras';
+          currentView = 'wallets';
           selectedBroker = null;
           selectedStrategy = null;
         } else if (newBreadcrumb[newBreadcrumb.length - 1] == 'Corretoras') {
@@ -639,8 +658,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildCurrentView() {
     switch (currentView) {
-      case 'carteiras':
-        return _buildCarteirasView();
+      case 'wallets':
+        return _buildWalletsView();
       case 'allBrokers':
         return _buildAllBrokersView();
       case 'brokers':
@@ -780,8 +799,8 @@ class _DashboardPageState extends State<DashboardPage> {
               _buildActionButton(
                 title: 'Carteiras',
                 icon: Icons.account_balance_wallet,
-                count: '${carteiras.length}',
-                onTap: navigateToCarteiras,
+                count: _carteiras.length.toString(), // Usando o número real de carteiras
+                onTap: navigateToWallets,
               ),
               _buildActionButton(
                 title: 'Estratégias',
@@ -845,7 +864,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 Container(
                   height: 120,
                   child: CustomPaint(
-                    painter: CarteiraChartPainter(carteiras: carteiras, isDarkMode: isDarkMode),
+                    // Passando a lista de Carteira para o WalletChartPainter
+                    painter: WalletChartPainter(carteiras: _carteiras, isDarkMode: isDarkMode),
                     size: Size.infinite,
                   ),
                 ),
@@ -913,7 +933,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildCarteirasView() {
+  Widget _buildWalletsView() {
     return SingleChildScrollView(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -922,7 +942,7 @@ class _DashboardPageState extends State<DashboardPage> {
           GestureDetector(
             onTap: () {
               setState(() {
-                showAddCarteira = true;
+                showAddWallet = true;
               });
             },
             child: Container(
@@ -963,7 +983,7 @@ class _DashboardPageState extends State<DashboardPage> {
           SizedBox(height: 16),
 
           // Lista de Carteiras
-          ...carteiras.map((carteira) => Container(
+          ..._carteiras.map((carteira) => Container(
             margin: EdgeInsets.only(bottom: 16),
             child: GestureDetector(
               onTap: () => navigateToBrokers(carteira),
@@ -1007,13 +1027,29 @@ class _DashboardPageState extends State<DashboardPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            carteira.nome,
+                            carteira.nome, // Usando o nome da carteira real
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: isDarkMode ? Colors.white : Colors.black,
                             ),
                           ),
-
+                          SizedBox(height: 4),
+                          Text(
+                            'R\$ 0,00', // Dados fictícios, pois Carteira não tem balance
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '+0.0%', // Dados fictícios, pois Carteira não tem change
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -1033,30 +1069,43 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildAllBrokersView() {
-    List<BrokerWithCarteira> allBrokers = [];
-    for (var carteira in carteiras) {
-      for (var broker in carteira.brokers) {
-        allBrokers.add(BrokerWithCarteira(
-          broker: broker,
-          carteiraName: carteira.name,
-          carteiraColor: carteira.color,
-        ));
-      }
+    List<BrokerWithWallet> allBrokers = [];
+    // Esta parte ainda usa a estrutura antiga de Wallet e Broker.
+    // Para usar dados reais, seria necessário adaptar a estrutura de dados
+    // ou buscar dados de corretoras e contas de forma separada.
+    // Por enquanto, manterei a estrutura existente com dados fictícios.
+    for (var carteira in _carteiras) {
+      // Simular brokers e contas para cada carteira real
+      allBrokers.add(BrokerWithWallet(
+        broker: Broker(
+          id: 1,
+          name: 'Corretora Fictícia para ${carteira.nome}',
+          logo: 'CF',
+          balance: 'R\$ 0,00',
+          change: '+0.0%',
+          isPositive: true,
+          accounts: [
+            Account(id: 1, number: '00000-0', agency: '0000', balance: 'R\$ 0,00'),
+          ],
+        ),
+        walletName: carteira.nome,
+        walletColor: Color(0xFF10B981),
+      ));
     }
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(20),
       child: Column(
-        children: allBrokers.map((brokerWithCarteira) => Container(
+        children: allBrokers.map((brokerWithWallet) => Container(
           margin: EdgeInsets.only(bottom: 16),
           child: GestureDetector(
             onTap: () {
               // Encontrar a carteira original para navegação
-              Carteira? originalCarteira = carteiras.firstWhere(
-                (w) => w.name == brokerWithCarteira.carteiraName,
-              );
-              selectedCarteira = originalCarteira;
-              navigateToAccounts(brokerWithCarteira.broker);
+              // Wallet? originalWallet = wallets.firstWhere(
+              //   (w) => w.name == brokerWithWallet.walletName,
+              // );
+              // selectedWallet = originalWallet;
+              navigateToAccounts(brokerWithWallet.broker);
             },
             child: Container(
               padding: EdgeInsets.all(16),
@@ -1088,7 +1137,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     child: Center(
                       child: Text(
-                        brokerWithCarteira.broker.logo,
+                        brokerWithWallet.broker.logo,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -1103,7 +1152,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          brokerWithCarteira.broker.name,
+                          brokerWithWallet.broker.name,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: isDarkMode ? Colors.white : Colors.black,
@@ -1111,7 +1160,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         SizedBox(height: 2),
                         Text(
-                          'Carteira: ${brokerWithCarteira.carteiraName}',
+                          'Carteira: ${brokerWithWallet.walletName}',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[500],
@@ -1119,7 +1168,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          brokerWithCarteira.broker.balance,
+                          brokerWithWallet.broker.balance,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -1128,10 +1177,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          brokerWithCarteira.broker.change,
+                          brokerWithWallet.broker.change,
                           style: TextStyle(
                             fontSize: 14,
-                            color: brokerWithCarteira.broker.isPositive ? Colors.green : Colors.red,
+                            color: brokerWithWallet.broker.isPositive ? Colors.green : Colors.red,
                           ),
                         ),
                       ],
@@ -1143,7 +1192,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         width: 16,
                         height: 16,
                         decoration: BoxDecoration(
-                          color: brokerWithCarteira.carteiraColor,
+                          color: brokerWithWallet.walletColor,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -1165,12 +1214,30 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildBrokersView() {
-    if (selectedCarteira == null) return Container();
+    if (selectedWallet == null) return Container();
+
+    // Esta parte ainda usa a estrutura antiga de Wallet e Broker.
+    // Para usar dados reais, seria necessário adaptar a estrutura de dados
+    // ou buscar dados de corretoras e contas de forma separada.
+    // Por enquanto, manterei a estrutura existente com dados fictícios.
+    List<Broker> simulatedBrokers = [
+      Broker(
+        id: 1,
+        name: 'Corretora Fictícia para ${selectedWallet!.name}',
+        logo: 'CF',
+        balance: 'R\$ 0,00',
+        change: '+0.0%',
+        isPositive: true,
+        accounts: [
+          Account(id: 1, number: '00000-0', agency: '0000', balance: 'R\$ 0,00'),
+        ],
+      ),
+    ];
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(20),
       child: Column(
-        children: selectedCarteira!.brokers.map((broker) => Container(
+        children: simulatedBrokers.map((broker) => Container(
           margin: EdgeInsets.only(bottom: 16),
           child: GestureDetector(
             onTap: () => navigateToAccounts(broker),
@@ -2509,6 +2576,31 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
+// Classes de modelo
+// A classe Wallet original foi mantida para compatibilidade com outras partes do código
+// que podem depender dela, mas os dados de carteira agora vêm de Carteira do carteira_model.dart
+class Wallet {
+  final int id;
+  final String name;
+  final String balance;
+  final String change;
+  final bool isPositive;
+  final Color color;
+  final int performance;
+  final List<Broker> brokers;
+
+  Wallet({
+    required this.id,
+    required this.name,
+    required this.balance,
+    required this.change,
+    required this.isPositive,
+    required this.color,
+    required this.performance,
+    required this.brokers,
+  });
+}
+
 class Broker {
   final int id;
   final String name;
@@ -2711,15 +2803,15 @@ class Invoice {
   });
 }
 
-class BrokerWithCarteira {
+class BrokerWithWallet {
   final Broker broker;
-  final String carteiraName;
-  final Color carteiraColor;
+  final String walletName;
+  final Color walletColor;
 
-  BrokerWithCarteira({
+  BrokerWithWallet({
     required this.broker,
-    required this.carteiraName,
-    required this.carteiraColor,
+    required this.walletName,
+    required this.walletColor,
   });
 }
 
@@ -2769,11 +2861,12 @@ class SimpleChartPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class CarteiraChartPainter extends CustomPainter {
+class WalletChartPainter extends CustomPainter {
+  // Modificado para aceitar List<Carteira>
   final List<Carteira> carteiras;
   final bool isDarkMode;
 
-  CarteiraChartPainter({required this.carteiras, required this.isDarkMode});
+  WalletChartPainter({required this.carteiras, required this.isDarkMode});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -2782,13 +2875,16 @@ class CarteiraChartPainter extends CustomPainter {
 
     for (int i = 0; i < carteiras.length; i++) {
       final carteira = carteiras[i];
-      final barHeight = (carteira.performance / 100) * maxHeight;
+      // Como Carteira não tem 'performance', usaremos um valor fictício ou adaptaremos.
+      // Por simplicidade, vou usar um valor fixo ou um índice para simular.
+      final performance = (i + 1) * 10; // Exemplo: 10, 20, 30...
+      final barHeight = (performance / 100) * maxHeight;
       final x = (i * 2 + 1) * barWidth;
       final y = size.height - barHeight;
 
       // Desenhar barra
       final barPaint = Paint()
-        ..color = carteira.color.withOpacity(0.8)
+        ..color = Color(0xFF10B981).withOpacity(0.8) // Cor fixa ou baseada em algum critério
         ..style = PaintingStyle.fill;
 
       final barRect = RRect.fromRectAndRadius(
@@ -2800,7 +2896,7 @@ class CarteiraChartPainter extends CustomPainter {
 
       // Desenhar borda
       final borderPaint = Paint()
-        ..color = carteira.color
+        ..color = Color(0xFF10B981) // Cor fixa ou baseada em algum critério
         ..strokeWidth = 2
         ..style = PaintingStyle.stroke;
 
@@ -2809,7 +2905,7 @@ class CarteiraChartPainter extends CustomPainter {
       // Desenhar texto do percentual
       final textPainter = TextPainter(
         text: TextSpan(
-          text: '${carteira.performance}%',
+          text: '${performance}%',
           style: TextStyle(
             color: isDarkMode ? Colors.white : Colors.black,
             fontSize: 12,
@@ -2828,7 +2924,7 @@ class CarteiraChartPainter extends CustomPainter {
       // Desenhar nome da carteira
       final namePainter = TextPainter(
         text: TextSpan(
-          text: carteira.name.split(' ')[1], // Pegar apenas a segunda palavra
+          text: carteira.nome, // Usando o nome da carteira real
           style: TextStyle(
             color: Colors.grey[500],
             fontSize: 10,
@@ -2848,3 +2944,4 @@ class CarteiraChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
