@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, Depends, Path, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List
@@ -33,6 +33,34 @@ async def criar_robo(
     return {"mensagem": "Robô criado com sucesso", "id": novo_robo.id}
 
 
+@router.put("/{id}")
+async def atualizar_robo(
+    id: int = Path(...),
+    nome: str = Form(...),
+    symbol: str = Form(...),
+    performance: List[str] = Form(...),
+    arquivo: UploadFile = File(None),  # opcional
+    db: Session = Depends(get_db)
+):
+    robo = db.query(models.Robos).filter(models.Robos.id == id).first()
+
+    if not robo:
+        raise HTTPException(status_code=404, detail="Robô não encontrado")
+
+    robo.nome = nome
+    robo.symbol = symbol
+    robo.performance = performance
+
+    if arquivo:
+        conteudo = await arquivo.read()
+        robo.arquivo = conteudo
+
+    db.commit()
+    db.refresh(robo)
+
+    return {"mensagem": "Robô atualizado com sucesso", "id": robo.id}
+
+
 @router.get("/download/{id}")
 def download_robo(id: int, db: Session = Depends(get_db)):
     robo = db.query(models.Robos).filter(models.Robos.id == id).first()
@@ -45,3 +73,5 @@ def download_robo(id: int, db: Session = Depends(get_db)):
         media_type="application/octet-stream",
         headers={"Content-Disposition": f"attachment; filename={robo.nome}.ex5"}
     )
+
+
