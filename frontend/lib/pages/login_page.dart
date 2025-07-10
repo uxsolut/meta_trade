@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../models/login_request.dart';
+import '../models/login_response.dart';
+import '../services/login_service.dart';
 import 'dart:ui' as ui;
 import 'dart:html' as html;
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -511,48 +515,37 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void _handleLogin() async {
+  Future<void> _handleLogin() async {
     final email = _emailController.text.trim();
     final senha = _passwordController.text;
 
     if (email.isEmpty || senha.isEmpty) {
-      _showSnackBar('Por favor, preencha todos os campos');
-      return;
+      return _showSnackBar('Por favor, preencha todos os campos');
     }
 
     setState(() => _isLoading = true);
 
     try {
-      final response = await http.post(
-        Uri.parse('https://meta-trade.onrender.com/users/login'), // Troque para sua URL da API se for diferente
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"email": email, "senha": senha}),
-      );
+    // 1) Monta o LoginRequest
+      final req = LoginRequest(email: email, senha: senha);
 
-      setState(() => _isLoading = false);
+    // 2) Chama o service
+      final LoginResponse resp = await _loginService.login(req);
 
-      if (response.statusCode == 200) {
-  final data = jsonDecode(response.body);
-  _showSnackBar('Login realizado com sucesso!');
+    // 3) Salva o token
+      await _storage.write(key: 'token', value: resp.token);
 
-  // Aguarda um pouco para mostrar o snackbar, depois navega
-  await Future.delayed(const Duration(milliseconds: 500));
-  if (!mounted) return;
-  Navigator.pushReplacementNamed(context, '/dashboard');
-  
-} else {
-        String errorMsg = 'Erro ao fazer login';
-        try {
-          final body = jsonDecode(response.body);
-          if (body is Map && body.containsKey('detail')) {
-            errorMsg = body['detail'].toString();
-          }
-        } catch (_) {}
-        _showSnackBar(errorMsg);
-      }
+      _showSnackBar('Login bem-sucedido, bem-vindo ${resp.nome}!');
+
+    // 4) Navega após um breve delay
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/dashboard');
     } catch (e) {
-      setState(() => _isLoading = false);
-      _showSnackBar('Erro de conexão com o servidor');
+    // Exibe a mensagem de erro (você pode extrair `e.toString()` ou melhorar a lógica)
+      _showSnackBar('Falha ao autenticar: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

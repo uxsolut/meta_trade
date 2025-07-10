@@ -38,6 +38,7 @@ class Ordem(BaseModel):
 class RobosBase(BaseModel):
     nome: str
     symbol: str
+    performance: Optional[List[str]] = None
 
 class RobosCreate(RobosBase):
     pass

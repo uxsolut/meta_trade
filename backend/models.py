@@ -60,6 +60,7 @@ class Robos(Base):
     symbol = Column(String, nullable=False)
     arquivo = Column(LargeBinary, nullable=False)
     criado_em = Column(DateTime, default=datetime.utcnow)
+    performance = Column(ARRAY(String))
 
     robos_do_user = relationship("RobosDoUser", back_populates="robo")
 

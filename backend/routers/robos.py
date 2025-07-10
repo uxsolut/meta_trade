@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+from typing import List
 from io import BytesIO
 
 from database import get_db
@@ -12,6 +13,7 @@ router = APIRouter(prefix="/robos", tags=["Robos"])
 async def criar_robo(
     nome: str = Form(...),
     symbol: str = Form(...),
+    performance: List[str] = Form(...),  # <- novo campo aqui
     arquivo: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
@@ -20,6 +22,7 @@ async def criar_robo(
     novo_robo = models.Robos(
         nome=nome,
         symbol=symbol,
+        performance=performance,
         arquivo=conteudo
     )
 
