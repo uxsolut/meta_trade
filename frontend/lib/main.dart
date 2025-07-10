@@ -1,16 +1,15 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'pages/homepage.dart'; // Sua Home
-import 'pages/dashboard_page.dart'; // <--- Importe a nova página aqui
+import 'pages/home_page.dart'; // Sua Home
+import 'pages/dashboard_page.dart'; // Página do dashboard
 import 'package:google_sign_in/google_sign_in.dart';
 
 // Importações específicas para Web
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import 'dart:ui_web' as ui_web; // <- O correto para acessar o platformViewRegistry na web
+import 'dart:ui_web' as ui_web; // Para registrar o botão Google na web
 
 void main() {
-  // Registrar botão Google Sign-In para Web
   if (kIsWeb) {
     ui_web.platformViewRegistry.registerViewFactory(
       'google-signin-button',
@@ -50,9 +49,8 @@ class GestorCapitaisApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'SF Pro Display',
       ),
-      home: const MobileHomePage(), // Continua iniciando pela homepage
+      home: const MobileHomePage(), // Tela inicial
       debugShowCheckedModeBanner: false,
-      // Rotas registradas para navegação por nome
       routes: {
         '/home': (context) => const MobileHomePage(),
         '/dashboard': (context) => DashboardPage(),

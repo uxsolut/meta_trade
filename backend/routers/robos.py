@@ -12,7 +12,7 @@ router = APIRouter(prefix="/robos", tags=["Robos"])
 async def criar_robo(
     nome: str = Form(...),
     symbol: str = Form(...),
-    arquivo: UploadFile = File(...),  # ✅ numero_magico removido
+    arquivo: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
     conteudo = await arquivo.read()
