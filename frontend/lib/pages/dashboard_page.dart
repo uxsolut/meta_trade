@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:http/http.dart' as http;
-import '../models/carteira_model.dart';
-import '../services/carteira_service.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -20,30 +17,98 @@ class _DashboardPageState extends State<DashboardPage> {
   bool showAddWallet = false;
   bool showAddAccount = false;
 
-  // Instância do serviço de carteira
-  late CarteiraService _carteiraService;
-
-  // Lista de carteiras reais
-  List<Carteira> _carteiras = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _carteiraService = CarteiraService(baseUrl: 'http://localhost:8080'); // Ajuste a URL base conforme necessário
-    _fetchCarteiras();
-  }
-
-  Future<void> _fetchCarteiras() async {
-    try {
-      final fetchedCarteiras = await _carteiraService.getCarteiras();
-      setState(() {
-        _carteiras = fetchedCarteiras;
-      });
-    } catch (e) {
-      print('Erro ao carregar carteiras: $e');
-      // Tratar erro, talvez mostrar uma mensagem para o usuário
-    }
-  }
+  // Dados das carteiras
+  List<Wallet> wallets = [
+    Wallet(
+      id: 1,
+      name: 'Carteira Principal',
+      balance: 'R\$ 187.450,20',
+      change: '+2.34%',
+      isPositive: true,
+      color: Color(0xFF10B981),
+      performance: 85,
+      brokers: [
+        Broker(
+          id: 1,
+          name: 'XP Investimentos',
+          logo: 'XP',
+          balance: 'R\$ 95.230,10',
+          change: '+1.89%',
+          isPositive: true,
+          accounts: [
+            Account(id: 1, number: '12345-6', agency: '0001', balance: 'R\$ 50.000,00'),
+            Account(id: 2, number: '78910-1', agency: '0001', balance: 'R\$ 45.230,10'),
+          ],
+        ),
+        Broker(
+          id: 2,
+          name: 'Rico Investimentos',
+          logo: 'RICO',
+          balance: 'R\$ 92.220,10',
+          change: '+2.78%',
+          isPositive: true,
+          accounts: [
+            Account(id: 3, number: '55555-5', agency: '0002', balance: 'R\$ 92.220,10'),
+          ],
+        ),
+      ],
+    ),
+    Wallet(
+      id: 2,
+      name: 'Carteira Conservadora',
+      balance: 'R\$ 125.890,15',
+      change: '+1.12%',
+      isPositive: true,
+      color: Color(0xFF3B82F6),
+      performance: 65,
+      brokers: [
+        Broker(
+          id: 3,
+          name: 'BTG Pactual',
+          logo: 'BTG',
+          balance: 'R\$ 125.890,15',
+          change: '+1.12%',
+          isPositive: true,
+          accounts: [
+            Account(id: 4, number: '99999-9', agency: '0003', balance: 'R\$ 125.890,15'),
+          ],
+        ),
+      ],
+    ),
+    Wallet(
+      id: 3,
+      name: 'Carteira Agressiva',
+      balance: 'R\$ 60.288,05',
+      change: '-0.45%',
+      isPositive: false,
+      color: Color(0xFFF59E0B),
+      performance: 45,
+      brokers: [
+        Broker(
+          id: 4,
+          name: 'Clear Corretora',
+          logo: 'CLEAR',
+          balance: 'R\$ 35.150,25',
+          change: '-0.23%',
+          isPositive: false,
+          accounts: [
+            Account(id: 5, number: '11111-1', agency: '0004', balance: 'R\$ 35.150,25'),
+          ],
+        ),
+        Broker(
+          id: 5,
+          name: 'Modalmais',
+          logo: 'MODAL',
+          balance: 'R\$ 25.137,80',
+          change: '-0.78%',
+          isPositive: false,
+          accounts: [
+            Account(id: 6, number: '22222-2', agency: '0005', balance: 'R\$ 25.137,80'),
+          ],
+        ),
+      ],
+    ),
+  ];
 
   // Dados do usuário
   UserProfile userProfile = UserProfile(
@@ -248,8 +313,7 @@ class _DashboardPageState extends State<DashboardPage> {
     ),
   ];
 
-  // Modificado para usar Carteira do carteira_model.dart
-  Carteira? selectedWallet;
+  Wallet? selectedWallet;
   Broker? selectedBroker;
   Strategy? selectedStrategy;
 
@@ -273,24 +337,11 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  // Modificado para usar Carteira do carteira_model.dart
-  void navigateToBrokers(Carteira carteira) {
+  void navigateToBrokers(Wallet wallet) {
     setState(() {
-      // Aqui você precisaria de uma forma de mapear Carteira para Wallet
-      // ou adaptar a lógica para usar diretamente Carteira.
-      // Por simplicidade, vou criar uma Wallet temporária para manter a estrutura.
-      selectedWallet = Wallet(
-        id: carteira.id,
-        name: carteira.nome,
-        balance: 'R\$ 0,00', // Dados fictícios, pois Carteira não tem balance
-        change: '+0.0%',
-        isPositive: true,
-        color: Color(0xFF10B981),
-        performance: 0,
-        brokers: [], // Dados fictícios, pois Carteira não tem brokers
-      );
+      selectedWallet = wallet;
       currentView = 'brokers';
-      breadcrumb = ['Dashboard', 'Carteiras', carteira.nome];
+      breadcrumb = ['Dashboard', 'Carteiras', wallet.name];
     });
   }
 
@@ -799,7 +850,7 @@ class _DashboardPageState extends State<DashboardPage> {
               _buildActionButton(
                 title: 'Carteiras',
                 icon: Icons.account_balance_wallet,
-                count: _carteiras.length.toString(), // Usando o número real de carteiras
+                count: '3',
                 onTap: navigateToWallets,
               ),
               _buildActionButton(
@@ -864,8 +915,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 Container(
                   height: 120,
                   child: CustomPaint(
-                    // Passando a lista de Carteira para o WalletChartPainter
-                    painter: WalletChartPainter(carteiras: _carteiras, isDarkMode: isDarkMode),
+                    painter: WalletChartPainter(wallets: wallets, isDarkMode: isDarkMode),
                     size: Size.infinite,
                   ),
                 ),
@@ -983,10 +1033,10 @@ class _DashboardPageState extends State<DashboardPage> {
           SizedBox(height: 16),
 
           // Lista de Carteiras
-          ..._carteiras.map((carteira) => Container(
+          ...wallets.map((wallet) => Container(
             margin: EdgeInsets.only(bottom: 16),
             child: GestureDetector(
-              onTap: () => navigateToBrokers(carteira),
+              onTap: () => navigateToBrokers(wallet),
               child: Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -1027,7 +1077,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            carteira.nome, // Usando o nome da carteira real
+                            wallet.name,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: isDarkMode ? Colors.white : Colors.black,
@@ -1035,7 +1085,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            'R\$ 0,00', // Dados fictícios, pois Carteira não tem balance
+                            wallet.balance,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -1044,10 +1094,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            '+0.0%', // Dados fictícios, pois Carteira não tem change
+                            wallet.change,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.green,
+                              color: wallet.isPositive ? Colors.green : Colors.red,
                             ),
                           ),
                         ],
@@ -1070,27 +1120,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildAllBrokersView() {
     List<BrokerWithWallet> allBrokers = [];
-    // Esta parte ainda usa a estrutura antiga de Wallet e Broker.
-    // Para usar dados reais, seria necessário adaptar a estrutura de dados
-    // ou buscar dados de corretoras e contas de forma separada.
-    // Por enquanto, manterei a estrutura existente com dados fictícios.
-    for (var carteira in _carteiras) {
-      // Simular brokers e contas para cada carteira real
-      allBrokers.add(BrokerWithWallet(
-        broker: Broker(
-          id: 1,
-          name: 'Corretora Fictícia para ${carteira.nome}',
-          logo: 'CF',
-          balance: 'R\$ 0,00',
-          change: '+0.0%',
-          isPositive: true,
-          accounts: [
-            Account(id: 1, number: '00000-0', agency: '0000', balance: 'R\$ 0,00'),
-          ],
-        ),
-        walletName: carteira.nome,
-        walletColor: Color(0xFF10B981),
-      ));
+    for (var wallet in wallets) {
+      for (var broker in wallet.brokers) {
+        allBrokers.add(BrokerWithWallet(
+          broker: broker,
+          walletName: wallet.name,
+          walletColor: wallet.color,
+        ));
+      }
     }
 
     return SingleChildScrollView(
@@ -1101,10 +1138,10 @@ class _DashboardPageState extends State<DashboardPage> {
           child: GestureDetector(
             onTap: () {
               // Encontrar a carteira original para navegação
-              // Wallet? originalWallet = wallets.firstWhere(
-              //   (w) => w.name == brokerWithWallet.walletName,
-              // );
-              // selectedWallet = originalWallet;
+              Wallet? originalWallet = wallets.firstWhere(
+                (w) => w.name == brokerWithWallet.walletName,
+              );
+              selectedWallet = originalWallet;
               navigateToAccounts(brokerWithWallet.broker);
             },
             child: Container(
@@ -1216,28 +1253,10 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget _buildBrokersView() {
     if (selectedWallet == null) return Container();
 
-    // Esta parte ainda usa a estrutura antiga de Wallet e Broker.
-    // Para usar dados reais, seria necessário adaptar a estrutura de dados
-    // ou buscar dados de corretoras e contas de forma separada.
-    // Por enquanto, manterei a estrutura existente com dados fictícios.
-    List<Broker> simulatedBrokers = [
-      Broker(
-        id: 1,
-        name: 'Corretora Fictícia para ${selectedWallet!.name}',
-        logo: 'CF',
-        balance: 'R\$ 0,00',
-        change: '+0.0%',
-        isPositive: true,
-        accounts: [
-          Account(id: 1, number: '00000-0', agency: '0000', balance: 'R\$ 0,00'),
-        ],
-      ),
-    ];
-
     return SingleChildScrollView(
       padding: EdgeInsets.all(20),
       child: Column(
-        children: simulatedBrokers.map((broker) => Container(
+        children: selectedWallet!.brokers.map((broker) => Container(
           margin: EdgeInsets.only(bottom: 16),
           child: GestureDetector(
             onTap: () => navigateToAccounts(broker),
@@ -2577,8 +2596,6 @@ class _DashboardPageState extends State<DashboardPage> {
 }
 
 // Classes de modelo
-// A classe Wallet original foi mantida para compatibilidade com outras partes do código
-// que podem depender dela, mas os dados de carteira agora vêm de Carteira do carteira_model.dart
 class Wallet {
   final int id;
   final String name;
@@ -2862,29 +2879,25 @@ class SimpleChartPainter extends CustomPainter {
 }
 
 class WalletChartPainter extends CustomPainter {
-  // Modificado para aceitar List<Carteira>
-  final List<Carteira> carteiras;
+  final List<Wallet> wallets;
   final bool isDarkMode;
 
-  WalletChartPainter({required this.carteiras, required this.isDarkMode});
+  WalletChartPainter({required this.wallets, required this.isDarkMode});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final barWidth = size.width / (carteiras.length * 2);
+    final barWidth = size.width / (wallets.length * 2);
     final maxHeight = size.height * 0.8;
 
-    for (int i = 0; i < carteiras.length; i++) {
-      final carteira = carteiras[i];
-      // Como Carteira não tem 'performance', usaremos um valor fictício ou adaptaremos.
-      // Por simplicidade, vou usar um valor fixo ou um índice para simular.
-      final performance = (i + 1) * 10; // Exemplo: 10, 20, 30...
-      final barHeight = (performance / 100) * maxHeight;
+    for (int i = 0; i < wallets.length; i++) {
+      final wallet = wallets[i];
+      final barHeight = (wallet.performance / 100) * maxHeight;
       final x = (i * 2 + 1) * barWidth;
       final y = size.height - barHeight;
 
       // Desenhar barra
       final barPaint = Paint()
-        ..color = Color(0xFF10B981).withOpacity(0.8) // Cor fixa ou baseada em algum critério
+        ..color = wallet.color.withOpacity(0.8)
         ..style = PaintingStyle.fill;
 
       final barRect = RRect.fromRectAndRadius(
@@ -2896,7 +2909,7 @@ class WalletChartPainter extends CustomPainter {
 
       // Desenhar borda
       final borderPaint = Paint()
-        ..color = Color(0xFF10B981) // Cor fixa ou baseada em algum critério
+        ..color = wallet.color
         ..strokeWidth = 2
         ..style = PaintingStyle.stroke;
 
@@ -2905,7 +2918,7 @@ class WalletChartPainter extends CustomPainter {
       // Desenhar texto do percentual
       final textPainter = TextPainter(
         text: TextSpan(
-          text: '${performance}%',
+          text: '${wallet.performance}%',
           style: TextStyle(
             color: isDarkMode ? Colors.white : Colors.black,
             fontSize: 12,
@@ -2924,7 +2937,7 @@ class WalletChartPainter extends CustomPainter {
       // Desenhar nome da carteira
       final namePainter = TextPainter(
         text: TextSpan(
-          text: carteira.nome, // Usando o nome da carteira real
+          text: wallet.name.split(' ')[1], // Pegar apenas a segunda palavra
           style: TextStyle(
             color: Colors.grey[500],
             fontSize: 10,
@@ -2944,4 +2957,3 @@ class WalletChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
