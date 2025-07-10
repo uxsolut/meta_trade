@@ -8,25 +8,28 @@ class Robo {
   final String nome;
   final Uint8List arquivo;
   final String symbol;
-  final DateTime? criadoEm;
+  final DateTime criadoEm;
+  final List<String>? performance;
 
   Robo({
     required this.id,
     required this.nome,
     required this.arquivo,
     required this.symbol,
-    this.criadoEm,
+    required this.criadoEm,
+    this.performance,
   });
 
   factory Robo.fromJson(Map<String, dynamic> json) {
     return Robo(
       id: json['id'] as int,
       nome: json['nome'] as String,
-      // o backend deve enviar o bytea como string Base64
+      // espera Base64 vindo do backend
       arquivo: base64Decode(json['arquivo'] as String),
       symbol: json['symbol'] as String,
-      criadoEm: json['criado_em'] != null
-          ? DateTime.parse(json['criado_em'] as String)
+      criadoEm: DateTime.parse(json['criado_em'] as String),
+      performance: json['performance'] != null
+          ? List<String>.from((json['performance'] as List<dynamic>))
           : null,
     );
   }
@@ -35,10 +38,10 @@ class Robo {
     return {
       'id': id,
       'nome': nome,
-      // converte de volta para Base64 ao enviar
       'arquivo': base64Encode(arquivo),
       'symbol': symbol,
-      'criado_em': criadoEm?.toIso8601String(),
+      'criado_em': criadoEm.toIso8601String(),
+      'performance': performance,
     };
   }
 }

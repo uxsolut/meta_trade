@@ -42,7 +42,7 @@ class RoboService {
     }
   }
 
-  /// PUT /robos/{id} → atualiza um robô existente
+  /// PUT /robos/{id}/ → atualiza um robô existente
   Future<Robo> updateRobo(Robo robo) async {
     final uri = Uri.parse('$baseUrl/robos/${robo.id}/');
     final resp = await _client.put(
@@ -58,7 +58,7 @@ class RoboService {
     }
   }
 
-  /// DELETE /robos/{id} → exclui um robô
+  /// DELETE /robos/{id}/ → exclui um robô
   Future<void> deleteRobo(int id) async {
     final uri = Uri.parse('$baseUrl/robos/$id/');
     final resp = await _client.delete(uri);
