@@ -2509,29 +2509,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-// Classes de modelo
-class Carteira {
-  final int id;
-  final String name;
-  final String balance;
-  final String change;
-  final bool isPositive;
-  final Color color;
-  final int performance;
-  final List<Broker> brokers;
-
-  Carteira({
-    required this.id,
-    required this.name,
-    required this.balance,
-    required this.change,
-    required this.isPositive,
-    required this.color,
-    required this.performance,
-    required this.brokers,
-  });
-}
-
 class Broker {
   final int id;
   final String name;
