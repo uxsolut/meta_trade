@@ -1,5 +1,6 @@
 // lib/services/robo_service.dart
 
+import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/robo.dart';
@@ -65,6 +66,20 @@ class RoboService {
 
     if (resp.statusCode != 204 && resp.statusCode != 200) {
       throw Exception('Erro ao deletar robô (${resp.statusCode})');
+    }
+  }
+
+/// GET /robos/download/{id} → baixa o arquivo (bytea) do robô
+  Future<Uint8List> downloadRoboArquivo(int id) async {
+    final uri = Uri.parse('$baseUrl/robos/download/$id');
+    final resp = await _client.get(uri);
+
+    if (resp.statusCode == 200) {
+      return resp.bodyBytes;
+    } else {
+      throw Exception(
+        'Erro ao baixar arquivo do robô (status: ${resp.statusCode})'
+      );
     }
   }
 }
