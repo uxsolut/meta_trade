@@ -779,7 +779,7 @@ class _DashboardPageState extends State<DashboardPage> {
             children: [
               _buildActionButton(
                 title: 'Carteiras',
-                icon: Icons.account_balance_carteira,
+                icon: Icons.account_balance_wallet,
                 count: '${carteiras.length}',
                 onTap: navigateToCarteiras,
               ),
@@ -996,7 +996,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        Icons.account_balance_carteira,
+                        Icons.account_balance_wallet,
                         color: Colors.white,
                         size: 20,
                       ),
