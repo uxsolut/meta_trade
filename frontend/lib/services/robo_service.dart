@@ -69,7 +69,7 @@ class RoboService {
     }
   }
 
-/// GET /robos/download/{id} → baixa o arquivo (bytea) do robô
+  /// GET /robos/download/{id} → baixa o arquivo (bytea) do robô
   Future<Uint8List> downloadRoboArquivo(int id) async {
     final uri = Uri.parse('$baseUrl/robos/download/$id');
     final resp = await _client.get(uri);
