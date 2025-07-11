@@ -11,8 +11,6 @@ import '../models/login_response.dart';
 import '../services/login_service.dart';
 import 'dart:ui' as ui;
 import 'dart:html' as html;
-import 'package:provider/provider.dart';
-import '../controllers/navegacao_controller.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -548,9 +546,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     // 4) Navega após um breve delay
       await Future.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
-      context.read<NavegacaoController>().mudarPara(EstadoNavegacao.dashboard);
+      Navigator.pushReplacementNamed(context, '/dashboard');
     } catch (e) {
-    // Exibe a mensagem de erro (você pode extrair `e.toString()` ou melhorar a lógica)
+    // Exibe a mensagem de erro (você pode extrair e.toString() ou melhorar a lógica)
       _showSnackBar('Falha ao autenticar: ${e.toString()}');
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -576,4 +574,3 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 }
-

@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import 'pages/home_page.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/login_page.dart'; // se ainda não tiver importado
-import 'controllers/navegacao_controller.dart'; // <- import do controller
+import 'controllers/navegacao_controller.dart';
+import 'controllers/login_controller.dart';
+import 'controllers/home_controller.dart';
+import 'controllers/dashboard_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 // Importações específicas para Web
@@ -42,6 +45,9 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NavegacaoController()),
+        ChangeNotifierProvider(create: (_) => LoginController()),
+        ChangeNotifierProvider(create: (_) => HomeController()),
+        ChangeNotifierProvider(create: (_) => DashboardController()),
       ],
       child: const GestorCapitaisApp(),
     ),
