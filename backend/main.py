@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routers import ordens
 import models as models
 from database import engine
-from routers import robos, users, robos_do_user, requisicoes, carteiras  # <- novos imports
+from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens  # <- novos imports
 
 models.Base.metadata.create_all(bind=engine)
 
