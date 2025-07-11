@@ -16,7 +16,7 @@ class LoginService {
 
   /// POST /login/ → autentica o usuário e retorna dados + token JWT
   Future<LoginResponse> login(LoginRequest request) async {
-    final uri = Uri.parse('$baseUrl/login/');
+    final uri = Uri.parse('$baseUrl/users/login');
     final resp = await _client.post(
       uri,
       headers: {'Content-Type': 'application/json'},
