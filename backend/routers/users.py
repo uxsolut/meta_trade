@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from database import get_db
 import models as models
-import schemas as schemas
+from schemas.users import User, UserCreate, UserLogin
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -15,7 +15,6 @@ SECRET_KEY = "pMXgaxwiXB3UDd32oJepjMp6Yyfb6qCUgqnwY46ihd3f9JdrkRm4Cx7YtVJ4y2Ba"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas
 
-# Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password, hashed_password):
@@ -31,9 +30,9 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-# ---------- CRIAR USUÁRIO (com hash de senha) ----------
-@router.post("/", response_model=schemas.User)
-def criar_user(item: schemas.UserCreate, db: Session = Depends(get_db)):
+# ---------- CRIAR USUÁRIO ----------
+@router.post("/", response_model=User)
+def criar_user(item: UserCreate, db: Session = Depends(get_db)):
     if db.query(models.User).filter(models.User.email == item.email).first():
         raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
     hashed_password = get_password_hash(item.senha)
@@ -49,16 +48,15 @@ def criar_user(item: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(novo_user)
     return novo_user
 
-# ---------- LOGIN (com JWT) ----------
+# ---------- LOGIN ----------
 @router.post("/login", response_model=dict)
-def login_user(item: schemas.UserLogin, db: Session = Depends(get_db)):
+def login_user(item: UserLogin, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == item.email).first()
     if not user or not verify_password(item.senha, user.senha):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="E-mail ou senha incorretos."
         )
-    # Gera o token JWT
     access_token = create_access_token(data={"sub": str(user.id)})
     return {
         "access_token": access_token,

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Requisicao, RobosDoUser
-from schemas import RequisicaoCreate, Requisicao as RequisicaoSchema
+from schemas.requisicoes import RequisicaoCreate, Requisicao as RequisicaoSchema
 
 router = APIRouter(prefix="/requisicoes", tags=["Requisicoes"])
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Carteira, User
-from schemas import CarteiraResponse
+from schemas.carteiras import CarteiraResponse
 from auth.dependencies import get_current_user
 
 router = APIRouter()

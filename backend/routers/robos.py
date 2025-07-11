@@ -3,11 +3,18 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List
 from io import BytesIO
+from schemas.robos import Robos as RobosSchema
 
 from database import get_db
 import models as models
 
+
 router = APIRouter(prefix="/robos", tags=["Robos"])
+
+@router.get("/", response_model=List[RobosSchema])
+def listar_robos(db: Session = Depends(get_db)):
+    robos = db.query(models.Robos).all()
+    return robos
 
 @router.post("/")
 async def criar_robo(

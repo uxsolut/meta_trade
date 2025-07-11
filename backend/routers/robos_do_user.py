@@ -2,11 +2,11 @@ from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import RobosDoUser
-from fastapi.responses import JSONResponse
+from schemas.robos_do_user import RoboDoUser
 
 router = APIRouter(prefix="/robos_do_user", tags=["Robôs do Usuário"])
 
-@router.post("/")
+@router.post("/", response_model=RoboDoUser)
 async def criar_robo_do_user(
     id_user: int = Form(...),
     id_robo: int = Form(...),
@@ -37,6 +37,4 @@ async def criar_robo_do_user(
     db.commit()
     db.refresh(novo)
 
-    return JSONResponse(
-        content={"mensagem": "Robô vinculado ao usuário com sucesso", "id": novo.id}
-    )
+    return novo
