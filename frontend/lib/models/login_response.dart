@@ -1,5 +1,3 @@
-// lib/models/login_response.dart
-
 class LoginResponse {
   final int id;
   final String nome;
@@ -14,11 +12,13 @@ class LoginResponse {
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    final user = json['user'] ?? {};
+
     return LoginResponse(
-      id: json['id'] as int,
-      nome: json['nome'] as String,
-      email: json['email'] as String,
-      token: json['token'] as String,
+      id: user['id'] ?? 0,
+      nome: user['nome'] ?? '',
+      email: user['email'] ?? '',
+      token: json['access_token'] ?? '',
     );
   }
 }
