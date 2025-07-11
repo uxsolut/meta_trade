@@ -29,7 +29,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email'],
+    
   );
+
+  final _loginService = LoginService(baseUrl: 'http://meta-trade.onrender.com/');
+  final _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
