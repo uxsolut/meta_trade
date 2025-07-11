@@ -1,3 +1,5 @@
+// frontend/lib/pages/dashboard.dart
+
 import 'package:flutter/material.dart';
 import 'dart:ui';
 

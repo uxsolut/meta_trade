@@ -1,3 +1,5 @@
+// frontend/lib/pages/login_page
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
@@ -9,6 +11,8 @@ import '../models/login_response.dart';
 import '../services/login_service.dart';
 import 'dart:ui' as ui;
 import 'dart:html' as html;
+import 'package:provider/provider.dart';
+import '../controllers/navegacao_controller.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -544,7 +548,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     // 4) Navega após um breve delay
       await Future.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      context.read<NavegacaoController>().mudarPara(EstadoNavegacao.dashboard);
     } catch (e) {
     // Exibe a mensagem de erro (você pode extrair `e.toString()` ou melhorar a lógica)
       _showSnackBar('Falha ao autenticar: ${e.toString()}');

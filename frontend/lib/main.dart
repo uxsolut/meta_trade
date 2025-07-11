@@ -1,13 +1,16 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'pages/home_page.dart'; // Sua Home
-import 'pages/dashboard_page.dart'; // Página do dashboard
+import 'package:provider/provider.dart';
+import 'pages/home_page.dart';
+import 'pages/dashboard_page.dart';
+import 'pages/login_page.dart'; // se ainda não tiver importado
+import 'controllers/navegacao_controller.dart'; // <- import do controller
 import 'package:google_sign_in/google_sign_in.dart';
 
 // Importações específicas para Web
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import 'dart:ui_web' as ui_web; // Para registrar o botão Google na web
+import 'dart:ui_web' as ui_web;
 
 void main() {
   if (kIsWeb) {
@@ -35,7 +38,14 @@ void main() {
     );
   }
 
-  runApp(const GestorCapitaisApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NavegacaoController()),
+      ],
+      child: const GestorCapitaisApp(),
+    ),
+  );
 }
 
 class GestorCapitaisApp extends StatelessWidget {
@@ -43,18 +53,16 @@ class GestorCapitaisApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final telaAtual = context.watch<NavegacaoController>().telaAtual;
+
     return MaterialApp(
       title: 'Gestor de Capitais',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: 'SF Pro Display',
       ),
-      home: const MobileHomePage(), // Tela inicial
+      home: telaAtual,
       debugShowCheckedModeBanner: false,
-      routes: {
-        '/home': (context) => const MobileHomePage(),
-        '/dashboard': (context) => DashboardPage(),
-      },
     );
   }
 }
