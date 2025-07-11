@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from models import RobosDoUser
+from models.robos_do_user import RobosDoUser
 from schemas.robos_do_user import RoboDoUser
 
 router = APIRouter(prefix="/robos_do_user", tags=["Robôs do Usuário"])

@@ -5,12 +5,12 @@ from jose import jwt
 from datetime import datetime, timedelta
 
 from database import get_db
-import models as models
-from schemas.users import User, UserCreate, UserLogin
+from models.users import User
+from schemas.users import User as UserSchema, UserCreate, UserLogin
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-# Configurações para JWT
+# JWT
 SECRET_KEY = "pMXgaxwiXB3UDd32oJepjMp6Yyfb6qCUgqnwY46ihd3f9JdrkRm4Cx7YtVJ4y2Ba"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas
@@ -27,22 +27,24 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # ---------- CRIAR USUÁRIO ----------
-@router.post("/", response_model=User)
+@router.post("/", response_model=UserSchema)
 def criar_user(item: UserCreate, db: Session = Depends(get_db)):
-    if db.query(models.User).filter(models.User.email == item.email).first():
+    if db.query(User).filter(User.email == item.email).first():
         raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
+
     hashed_password = get_password_hash(item.senha)
-    novo_user = models.User(
+
+    novo_user = User(
         nome=item.nome,
         email=item.email,
         senha=hashed_password,
         cpf=item.cpf,
         id_corretora=item.id_corretora,
     )
+
     db.add(novo_user)
     db.commit()
     db.refresh(novo_user)
@@ -51,13 +53,15 @@ def criar_user(item: UserCreate, db: Session = Depends(get_db)):
 # ---------- LOGIN ----------
 @router.post("/login", response_model=dict)
 def login_user(item: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == item.email).first()
+    user = db.query(User).filter(User.email == item.email).first()
     if not user or not verify_password(item.senha, user.senha):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="E-mail ou senha incorretos."
         )
+
     access_token = create_access_token(data={"sub": str(user.id)})
+
     return {
         "access_token": access_token,
         "token_type": "bearer",

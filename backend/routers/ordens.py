@@ -1,18 +1,17 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-import models as models
-import schemas.ordens as schemas
+from models.ordens import Ordem
+from schemas.ordens import OrdemCreate, Ordem as OrdemSchema
 from database import get_db
 
 router = APIRouter(prefix="/ordens", tags=["Ordem"])
 
-@router.post("/", response_model=schemas.Ordem)
+@router.post("/", response_model=OrdemSchema)
 def criar_ordem(
-    item: schemas.OrdemCreate,
+    item: OrdemCreate,
     db: Session = Depends(get_db)
 ):
-    # `exclude_unset=True` garante que apenas os campos enviados no payload sejam usados
-    nova_ordem = models.Ordem(**item.dict(exclude_unset=True))
+    nova_ordem = Ordem(**item.dict(exclude_unset=True))
     db.add(nova_ordem)
     db.commit()
     db.refresh(nova_ordem)
