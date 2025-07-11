@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens  # <- novos imports
+from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens  
 
 Base.metadata.create_all(bind=engine)
 

@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     
   );
 
-  final _loginService = LoginService(baseUrl: 'https://meta-trade.onrender.com/');
+  final _loginService = LoginService(baseUrl: 'https://meta-trade.onrender.com');
   final _storage = const FlutterSecureStorage();
 
   @override
