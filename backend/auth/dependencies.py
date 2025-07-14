@@ -1,13 +1,20 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
+
 from database import get_db
 from models.users import User
 from auth.auth import verificar_token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")  # ou seu endpoint de login real
+# Substitui OAuth2PasswordBearer por HTTPBearer para funcionar no Swagger
+security = HTTPBearer()
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+) -> User:
+    token = credentials.credentials  # Pega só o token puro (sem "Bearer ")
+
     try:
         user_id = verificar_token(token)
     except Exception:
@@ -24,4 +31,5 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             detail="Usuário não encontrado",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     return user
