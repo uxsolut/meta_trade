@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import List
+
 from models.ordens import Ordem
 from schemas.ordens import OrdemCreate, Ordem as OrdemSchema
 from database import get_db
@@ -16,3 +18,8 @@ def criar_ordem(
     db.commit()
     db.refresh(nova_ordem)
     return nova_ordem
+
+# 🔽 NOVO GET ADICIONADO AQUI
+@router.get("/", response_model=List[OrdemSchema])
+def listar_ordens(db: Session = Depends(get_db)):
+    return db.query(Ordem).all()
