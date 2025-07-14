@@ -6,19 +6,18 @@ from models.users import User
 from schemas.carteiras import CarteiraResponse, CarteiraCreate
 from auth.dependencies import get_current_user
 
-router = APIRouter()
+router = APIRouter(prefix="/carteiras", tags=["Carteiras"])
 
 # ---------- GET: Listar carteiras do usuário ----------
-@router.get("/carteiras/", response_model=list[CarteiraResponse])
+@router.get("/", response_model=list[CarteiraResponse])
 def listar_carteiras(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user)
 ):
-    carteiras = db.query(Carteira).filter(Carteira.id_user == user.id).all()
-    return carteiras
+    return db.query(Carteira).filter(Carteira.id_user == user.id).all()
 
-# ---------- POST: Criar carteira ----------
-@router.post("/carteiras/", response_model=CarteiraResponse, status_code=status.HTTP_201_CREATED)
+# ---------- POST: Criar carteira para usuário logado ----------
+@router.post("/", response_model=CarteiraResponse, status_code=status.HTTP_201_CREATED)
 def criar_carteira(
     dados: CarteiraCreate,
     db: Session = Depends(get_db),
