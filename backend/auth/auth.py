@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from typing import Optional
 
 # Chave secreta e algoritmo
-SECRET_KEY = "sua_chave_secreta_segura_aqui"  # troque por algo seguro
+SECRET_KEY = "4RAtt9Xu7CcRnHFCwdd4oFzrUmL8D8eFnLgf8vzxFr9PWTVrYjvVYBEn8mLCebRb" 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24h
 
