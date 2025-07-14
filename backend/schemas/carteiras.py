@@ -1,5 +1,8 @@
 from pydantic import BaseModel
 
+class CarteiraCreate(BaseModel):
+    nome: str
+
 class CarteiraResponse(BaseModel):
     id: int
     nome: str
