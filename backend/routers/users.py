@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
+from typing import List
 
 from database import get_db
 from models.users import User
@@ -73,3 +74,7 @@ def login_user(item: UserLogin, db: Session = Depends(get_db)):
             "id_corretora": user.id_corretora,
         }
     }
+
+@router.get("/", response_model=List[UserSchema])
+def listar_users(db: Session = Depends(get_db)):
+    return db.query(User).all()
