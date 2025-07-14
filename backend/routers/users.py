@@ -12,7 +12,7 @@ from schemas.users import User as UserSchema, UserCreate, UserLogin
 router = APIRouter(prefix="/users", tags=["Users"])
 
 # ---------- CONFIGURAÇÕES JWT ----------
-SECRET_KEY = "pMXgaxwiXB3UDd32oJepjMp6Yyfb6qCUgqnwY46ihd3f9JdrkRm4Cx7YtVJ4y2Ba"
+SECRET_KEY = "4RAtt9Xu7CcRnHFCwdd4oFzrUmL8D8eFnLgf8vzxFr9PWTVrYjvVYBEn8mLCebRb"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas
 
