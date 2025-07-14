@@ -11,7 +11,7 @@ from schemas.users import User as UserSchema, UserCreate, UserLogin
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-# JWT
+# ---------- CONFIGURAÇÕES JWT ----------
 SECRET_KEY = "pMXgaxwiXB3UDd32oJepjMp6Yyfb6qCUgqnwY46ihd3f9JdrkRm4Cx7YtVJ4y2Ba"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas
@@ -61,6 +61,7 @@ def login_user(item: UserLogin, db: Session = Depends(get_db)):
             detail="E-mail ou senha incorretos."
         )
 
+    # ✅ Correção: converter o ID para string no payload do token
     access_token = create_access_token(data={"sub": str(user.id)})
 
     return {
@@ -75,6 +76,7 @@ def login_user(item: UserLogin, db: Session = Depends(get_db)):
         }
     }
 
+# ---------- LISTAR USUÁRIOS ----------
 @router.get("/", response_model=List[UserSchema])
 def listar_users(db: Session = Depends(get_db)):
     return db.query(User).all()
