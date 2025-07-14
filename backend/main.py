@@ -1,14 +1,12 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from database import engine, Base
 from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens  
-from auth.dependencies import security  # <- IMPORTANTE para autenticação global
 
 Base.metadata.create_all(bind=engine)
 
-# ✅ Inclui a verificação do token JWT globalmente
-app = FastAPI(dependencies=[Depends(security)])
+app = FastAPI()
 
 # Configuração de CORS (liberar origens)
 app.add_middleware(
