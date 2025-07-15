@@ -1,6 +1,8 @@
-from sqlalchemy import (Column, Integer, String, ForeignKey)
-from database import Base
+# backend/models/users.py
+
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+from database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -12,5 +14,13 @@ class User(Base):
     cpf = Column(String, nullable=True)
     id_corretora = Column(Integer, ForeignKey("corretoras.id"), nullable=True)
 
+    # Relações existentes
     ordens = relationship("Ordem", back_populates="user")
     robos_do_user = relationship("RobosDoUser", back_populates="user")
+
+    # Nova relação com carteiras
+    carteiras = relationship(
+        "Carteira",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
