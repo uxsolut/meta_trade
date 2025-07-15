@@ -8,6 +8,7 @@ from typing import List
 from database import get_db
 from models.users import User
 from schemas.users import User as UserSchema, UserCreate, UserLogin
+from auth.dependencies import get_current_user  # ✅ Importar função que valida JWT
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -61,7 +62,6 @@ def login_user(item: UserLogin, db: Session = Depends(get_db)):
             detail="E-mail ou senha incorretos."
         )
 
-    # ✅ Correção: converter o ID para string no payload do token
     access_token = create_access_token(data={"sub": str(user.id)})
 
     return {
@@ -78,5 +78,8 @@ def login_user(item: UserLogin, db: Session = Depends(get_db)):
 
 # ---------- LISTAR USUÁRIOS ----------
 @router.get("/", response_model=List[UserSchema])
-def listar_users(db: Session = Depends(get_db)):
+def listar_users(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ JWT obrigatório
+):
     return db.query(User).all()
