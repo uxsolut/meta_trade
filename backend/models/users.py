@@ -17,7 +17,6 @@ class User(Base):
     # Relações existentes
     ordens = relationship("Ordem", back_populates="user")
     robos_do_user = relationship("RobosDoUser", back_populates="user")
-    corretora = relationship("Corretora", back_populates="users")
 
     # Nova relação com carteiras
     carteiras = relationship(

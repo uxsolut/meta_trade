@@ -2,8 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from database import engine, Base
+
+from models import corretoras  
 from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens  
 
+# Criação das tabelas no banco
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -22,7 +25,7 @@ app.add_middleware(
 def read_root():
     return {"mensagem": "API online com sucesso!"}
 
-# Rotas incluídas
+# Inclusão das rotas
 app.include_router(ordens.router)
 app.include_router(robos.router)
 app.include_router(users.router)          
@@ -30,7 +33,7 @@ app.include_router(robos_do_user.router)
 app.include_router(requisicoes.router)
 app.include_router(carteiras.router)
 
-# Configuração personalizada para o Swagger aceitar Bearer token
+# Swagger com suporte a Bearer token
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
@@ -53,7 +56,7 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
-# Execução local
+# Execução local (útil para desenvolvimento)
 import os
 if __name__ == "__main__":
     import uvicorn
