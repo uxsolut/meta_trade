@@ -4,24 +4,31 @@ from sqlalchemy.orm import Session
 from typing import List
 from io import BytesIO
 
-from database import get_db
 from schemas.robos import Robos as RobosSchema
 from models.robos import Robos  
+from models.users import User
+from auth.dependencies import get_db, get_current_user
 
 router = APIRouter(prefix="/robos", tags=["Robos"])
 
+# ---------- GET: Listar todos os robôs ----------
 @router.get("/", response_model=List[RobosSchema])
-def listar_robos(db: Session = Depends(get_db)):
+def listar_robos(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Proteção com JWT
+):
     robos = db.query(Robos).all()
     return robos
 
+# ---------- POST: Criar novo robô ----------
 @router.post("/")
 async def criar_robo(
     nome: str = Form(...),
     symbol: str = Form(...),
     performance: List[str] = Form(...),
     arquivo: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Proteção com JWT
 ):
     conteudo = await arquivo.read()
 
@@ -38,6 +45,7 @@ async def criar_robo(
 
     return {"mensagem": "Robô criado com sucesso", "id": novo_robo.id}
 
+# ---------- PUT: Atualizar robô existente ----------
 @router.put("/{id}")
 async def atualizar_robo(
     id: int = Path(...),
@@ -45,7 +53,8 @@ async def atualizar_robo(
     symbol: str = Form(...),
     performance: List[str] = Form(...),
     arquivo: UploadFile = File(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Proteção com JWT
 ):
     robo = db.query(Robos).filter(Robos.id == id).first()
 
@@ -65,8 +74,13 @@ async def atualizar_robo(
 
     return {"mensagem": "Robô atualizado com sucesso", "id": robo.id}
 
+# ---------- GET: Download do arquivo do robô ----------
 @router.get("/download/{id}")
-def download_robo(id: int, db: Session = Depends(get_db)):
+def download_robo(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Proteção com JWT
+):
     robo = db.query(Robos).filter(Robos.id == id).first()
 
     if not robo:

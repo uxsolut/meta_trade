@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Optional
 
 class RoboDoUserCreate(BaseModel):
-    id_user: int
     id_robo: int
     ligado: Optional[bool] = False
     ativo: Optional[bool] = False
@@ -23,4 +22,4 @@ class RoboDoUser(BaseModel):
     id_corretora: Optional[int] = None
 
     class Config:
-        from_attributes = True
+        from_attributes = True 

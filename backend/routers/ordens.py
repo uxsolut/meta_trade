@@ -3,15 +3,18 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from models.ordens import Ordem
+from models.users import User
 from schemas.ordens import OrdemCreate, Ordem as OrdemSchema
-from database import get_db
+from auth.dependencies import get_db, get_current_user
+
 
 router = APIRouter(prefix="/ordens", tags=["Ordem"])
 
 @router.post("/", response_model=OrdemSchema)
 def criar_ordem(
     item: OrdemCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # Proteção via JWT
 ):
     nova_ordem = Ordem(**item.dict(exclude_unset=True))
     db.add(nova_ordem)
@@ -19,7 +22,9 @@ def criar_ordem(
     db.refresh(nova_ordem)
     return nova_ordem
 
-# 🔽 NOVO GET ADICIONADO AQUI
 @router.get("/", response_model=List[OrdemSchema])
-def listar_ordens(db: Session = Depends(get_db)):
+def listar_ordens(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # Proteção via JWT
+):
     return db.query(Ordem).all()
