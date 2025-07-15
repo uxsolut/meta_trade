@@ -45,6 +45,7 @@ def criar_user(item: UserCreate, db: Session = Depends(get_db)):
         senha=hashed_password,
         cpf=item.cpf,
         id_corretora=item.id_corretora,
+        tipo_de_user=item.tipo_de_user  # ✅ novo campo
     )
 
     db.add(novo_user)
@@ -73,6 +74,7 @@ def login_user(item: UserLogin, db: Session = Depends(get_db)):
             "email": user.email,
             "cpf": user.cpf,
             "id_corretora": user.id_corretora,
+            "tipo_de_user": user.tipo_de_user 
         }
     }
 
@@ -80,6 +82,6 @@ def login_user(item: UserLogin, db: Session = Depends(get_db)):
 @router.get("/", response_model=List[UserSchema])
 def listar_users(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),  # ✅ JWT obrigatório
+    current_user: User = Depends(get_current_user), 
 ):
     return db.query(User).all()

@@ -14,6 +14,9 @@ class User(Base):
     cpf = Column(String, nullable=True)
     id_corretora = Column(Integer, ForeignKey("corretoras.id"), nullable=True)
 
+    # Novo campo
+    tipo_de_user = Column(String, nullable=True)
+
     # Relações existentes
     ordens = relationship("Ordem", back_populates="user")
     robos_do_user = relationship("RobosDoUser", back_populates="user")
