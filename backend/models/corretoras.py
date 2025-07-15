@@ -1,6 +1,6 @@
-from sqlalchemy import (Column, Integer, String)
-from database import Base
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
+from database import Base
 
 class Corretora(Base):
     __tablename__ = "corretoras"
@@ -11,4 +11,4 @@ class Corretora(Base):
     telefone = Column(String, nullable=True)
     email = Column(String, nullable=True)
 
-    users = relationship("User", backref="corretora")
+    contas = relationship("Conta", back_populates="corretora")
