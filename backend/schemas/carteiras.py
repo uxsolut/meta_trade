@@ -1,12 +1,16 @@
 from pydantic import BaseModel
 
-class CarteiraCreate(BaseModel):
+class CarteiraBase(BaseModel):
     nome: str
 
-class CarteiraResponse(BaseModel):
+class CarteiraCreate(CarteiraBase):
+    """
+    Apenas o nome vem no corpo do POST.
+    """
+
+class Carteira(CarteiraBase):
     id: int
-    nome: str
     id_user: int
 
     class Config:
-        from_attributes = True  
+        orm_mode = True
