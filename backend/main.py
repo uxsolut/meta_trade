@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from database import engine, Base
 
-from backend.models import corretoras  
+from models import corretoras  
 from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens, contas  
 
 # Criação das tabelas no banco
