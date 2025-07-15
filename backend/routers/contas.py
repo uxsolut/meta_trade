@@ -28,15 +28,12 @@ def listar_contas(
 ):
     return db.query(ContaModel).all()
 
-@router.get("/{conta_id}", response_model=Conta)
-def obter_conta(conta_id: int, db: Session = Depends(get_db)):
-    conta = db.query(ContaModel).filter(ContaModel.id == conta_id).first()
-    if not conta:
-        raise HTTPException(status_code=404, detail="Conta não encontrada")
-    return conta
-
 @router.delete("/{conta_id}")
-def deletar_conta(conta_id: int, db: Session = Depends(get_db)):
+def deletar_conta(
+    conta_id: int, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     conta = db.query(ContaModel).filter(ContaModel.id == conta_id).first()
     if not conta:
         raise HTTPException(status_code=404, detail="Conta não encontrada")
