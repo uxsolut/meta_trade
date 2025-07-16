@@ -11,4 +11,4 @@ class Carteira(Base):
     id_conta = Column(Integer, ForeignKey("contas.id", ondelete="SET NULL"), nullable=True)
 
     user = relationship("User", back_populates="carteiras")
-    conta = relationship("Conta", backref="carteiras")
+    conta = relationship("Conta", back_populates="carteiras")
