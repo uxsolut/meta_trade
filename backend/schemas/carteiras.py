@@ -1,13 +1,18 @@
 from typing import Optional
 from pydantic import BaseModel
-from .contas import Conta  # se for usado
+from schemas.contas import Conta  # Ajuste o caminho conforme seu projeto
 
-class Carteira(BaseModel):
-    id: int
+class CarteiraBase(BaseModel):
     nome: str
+    id_conta: Optional[int] = None  # <- Aceita nulo
+
+class CarteiraCreate(CarteiraBase):
+    pass
+
+class Carteira(CarteiraBase):
+    id: int
     id_user: int
-    id_conta: Optional[int]  # <- ESSENCIAL
-    conta: Optional[Conta]   # <- se você retorna a conta aninhada
+    conta: Optional[Conta] = None  # <- Objeto completo pode ser nulo
 
     class Config:
         orm_mode = True
