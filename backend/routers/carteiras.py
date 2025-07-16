@@ -1,9 +1,9 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
-from models.carteira import Carteira as CarteiraModel
+from backend.models.carteiras import Carteira as CarteiraModel
 from models.users import User
 from schemas.carteiras import Carteira, CarteiraCreate
 from auth.dependencies import get_db, get_current_user
@@ -19,11 +19,13 @@ def read_carteiras(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Lista todas as carteiras do usuário autenticado.
+    Lista todas as carteiras do usuário autenticado,
+    incluindo a conta associada (campo conta.nome).
     """
     return (
         db
         .query(CarteiraModel)
+        .options(joinedload(CarteiraModel.conta))  # 👈 carrega o relacionamento
         .filter(CarteiraModel.id_user == current_user.id)
         .all()
     )
@@ -40,7 +42,8 @@ def create_carteira(
     """
     nova = CarteiraModel(
         nome=carteira_in.nome,
-        id_user=current_user.id
+        id_user=current_user.id,
+        id_conta=carteira_in.id_conta  # 👈 agora aceita a conta associada
     )
     db.add(nova)
     db.commit()

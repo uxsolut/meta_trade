@@ -5,7 +5,7 @@ from models.contas import Conta as ContaModel
 from schemas.contas import Conta, ContaCreate
 from typing import List
 from models.users import User
-from auth.dependencies import get_db, get_current_user
+from auth.dependencies import get_current_user
 
 router = APIRouter(prefix="/contas", tags=["Contas"])
 

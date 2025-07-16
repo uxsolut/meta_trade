@@ -5,6 +5,7 @@ class ContaBase(BaseModel):
     id_robo_user: int
     conta_meta_trader: Optional[str] = None
     id_corretora: Optional[int] = None
+    nome: Optional[str] = None  # 👈 novo campo para exibir o nome da conta
 
 class ContaCreate(ContaBase):
     pass
