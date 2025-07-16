@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session, joinedload
 
-from backend.models.carteiras import Carteira as CarteiraModel
+from models.carteiras import Carteira as CarteiraModel
 from models.users import User
 from schemas.carteiras import Carteira, CarteiraCreate
 from auth.dependencies import get_db, get_current_user
