@@ -44,7 +44,7 @@ def criar_user(item: UserCreate, db: Session = Depends(get_db)):
         email=item.email,
         senha=hashed_password,
         cpf=item.cpf,
-        id_corretora=item.id_corretora,
+        id_conta=item.id_conta,
         tipo_de_user=item.tipo_de_user  # ✅ novo campo
     )
 
@@ -73,7 +73,7 @@ def login_user(item: UserLogin, db: Session = Depends(get_db)):
             "nome": user.nome,
             "email": user.email,
             "cpf": user.cpf,
-            "id_corretora": user.id_corretora,
+            "id_conta": user.id_conta,
             "tipo_de_user": user.tipo_de_user 
         }
     }
