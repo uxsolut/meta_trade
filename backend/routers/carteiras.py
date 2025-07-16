@@ -38,7 +38,7 @@ def create_carteira(
 ):
     """
     Cria uma nova carteira vinculada ao usuário autenticado.
-    Aceita opcionalmente o ID de uma conta associada.
+    Aceita opcionalmente o ID de uma conta associada
     """
     nova = CarteiraModel(
         nome=carteira_in.nome,
