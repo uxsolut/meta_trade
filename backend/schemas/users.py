@@ -6,7 +6,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     senha: str
     cpf: Optional[str] = None
-    id_corretora: Optional[int] = None
+    id_conta: Optional[int] = None
     tipo_de_user: Optional[str] = None  # Novo campo
 
 class User(BaseModel):
@@ -14,7 +14,7 @@ class User(BaseModel):
     nome: str
     email: EmailStr
     cpf: Optional[str] = None
-    id_corretora: Optional[int] = None
+    id_conta: Optional[int] = None
     tipo_de_user: Optional[str] = None  # Novo campo
 
     class Config:
