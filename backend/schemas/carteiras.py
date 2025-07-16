@@ -1,21 +1,13 @@
-from pydantic import BaseModel
 from typing import Optional
-from schemas.contas import Conta  # ⚠️ precisa existir schemas/contas.py com campo 'nome'
+from pydantic import BaseModel
+from .contas import Conta  # se for usado
 
-class CarteiraBase(BaseModel):
-    nome: str
-    id_conta: Optional[int] = None
-
-class CarteiraCreate(CarteiraBase):
-    """
-    Apenas nome e id_conta vêm no corpo do POST.
-    """
-    pass
-
-class Carteira(CarteiraBase):
+class Carteira(BaseModel):
     id: int
+    nome: str
     id_user: int
-    conta: Optional[Conta]  # 👈 conta vinculada (vai permitir acessar nome da conta)
+    id_conta: Optional[int]  # <- ESSENCIAL
+    conta: Optional[Conta]   # <- se você retorna a conta aninhada
 
     class Config:
         orm_mode = True
