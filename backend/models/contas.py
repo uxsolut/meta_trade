@@ -14,4 +14,4 @@ class Conta(Base):
     robo_user = relationship("RobosDoUser", backref="contas")
     corretora = relationship("Corretora", backref="contas")
     users = relationship("User", backref="conta")
-    carteiras = relationship("Carteira", backref="conta")  # 👈 importante para o join reverso
+    carteiras = relationship("Carteira", back_populates="conta")
