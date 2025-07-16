@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models.contas import Conta as ContaModel
+from models.carteiras import Carteira as CarteiraModel
 from schemas.contas import Conta, ContaCreate
 from typing import List
 from models.users import User
@@ -27,6 +28,22 @@ def listar_contas(
     current_user: User = Depends(get_current_user),
 ):
     return db.query(ContaModel).all()
+
+@router.get("/carteira/{carteira_id}", response_model=List[Conta])
+def get_conta_by_carteira_id(
+    carteira_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    carteira = db.query(CarteiraModel).filter(CarteiraModel.id == carteira_id).first()
+    if not carteira:
+        raise HTTPException(status_code=404, detail="Carteira não encontrada")
+
+    conta = db.query(ContaModel).filter(ContaModel.id == carteira.id_conta).first()
+    if not conta:
+        raise HTTPException(status_code=404, detail="Conta não encontrada para essa carteira")
+
+    return [conta]  # retorna como lista para compatibilidade com frontend
 
 @router.delete("/{conta_id}")
 def deletar_conta(
