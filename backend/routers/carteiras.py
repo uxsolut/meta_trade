@@ -1,5 +1,4 @@
 from typing import List
-
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session, joinedload
 
@@ -10,7 +9,7 @@ from auth.dependencies import get_db, get_current_user
 
 router = APIRouter(
     prefix="/carteiras",
-    tags=["carteiras"],
+    tags=["Carteiras"],
 )
 
 @router.get("/", response_model=List[Carteira])
@@ -20,15 +19,15 @@ def read_carteiras(
 ):
     """
     Lista todas as carteiras do usuário autenticado,
-    incluindo a conta associada (campo conta.nome).
+    incluindo a conta associada (campo `conta.nome`, etc.).
     """
-    return (
-        db
-        .query(CarteiraModel)
-        .options(joinedload(CarteiraModel.conta))  # 👈 carrega o relacionamento
+    carteiras = (
+        db.query(CarteiraModel)
+        .options(joinedload(CarteiraModel.conta))  # <- Carrega a relação conta
         .filter(CarteiraModel.id_user == current_user.id)
         .all()
     )
+    return carteiras
 
 
 @router.post("/", response_model=Carteira, status_code=status.HTTP_201_CREATED)
@@ -39,11 +38,12 @@ def create_carteira(
 ):
     """
     Cria uma nova carteira vinculada ao usuário autenticado.
+    Aceita opcionalmente o ID de uma conta associada.
     """
     nova = CarteiraModel(
         nome=carteira_in.nome,
         id_user=current_user.id,
-        id_conta=carteira_in.id_conta  # 👈 agora aceita a conta associada
+        id_conta=carteira_in.id_conta  # Pode ser None
     )
     db.add(nova)
     db.commit()
