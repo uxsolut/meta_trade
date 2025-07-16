@@ -12,6 +12,6 @@ class Conta(Base):
     id_corretora = Column(Integer, ForeignKey("corretoras.id", ondelete="SET NULL"))
 
     robo_user = relationship("RobosDoUser", backref="contas")
-    corretora = relationship("Corretora", backref="contas")
+    corretora = relationship("Corretora", back_populates="contas")
     users = relationship("User", backref="conta")
     carteiras = relationship("Carteira", back_populates="conta")
