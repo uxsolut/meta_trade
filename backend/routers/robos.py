@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List
 from io import BytesIO
+from typing import Optional
 
 from schemas.robos import Robos as RobosSchema
 from models.robos import Robos  
@@ -49,10 +50,10 @@ async def criar_robo(
 @router.put("/{id}")
 async def atualizar_robo(
     id: int = Path(...),
-    nome: str = Form(...),
-    symbol: str = Form(...),
-    performance: List[str] = Form(...),
-    arquivo: UploadFile = File(None),
+    nome: Optional[str] = Form(None),
+    symbol: Optional[str] = Form(None),
+    performance: Optional[List[str]] = Form(None),
+    arquivo: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),  # ✅ Proteção com JWT
 ):
@@ -61,11 +62,16 @@ async def atualizar_robo(
     if not robo:
         raise HTTPException(status_code=404, detail="Robô não encontrado")
 
-    robo.nome = nome
-    robo.symbol = symbol
-    robo.performance = performance
+    if nome is not None:
+        robo.nome = nome
 
-    if arquivo:
+    if symbol is not None:
+        robo.symbol = symbol
+
+    if performance is not None:
+        robo.performance = performance
+
+    if arquivo is not None:
         conteudo = await arquivo.read()
         robo.arquivo = conteudo
 
