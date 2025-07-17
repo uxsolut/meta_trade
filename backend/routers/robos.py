@@ -12,7 +12,7 @@ from auth.dependencies import get_db, get_current_user
 
 router = APIRouter(prefix="/robos", tags=["Robos"])
 
-# ---------- GET: Listar todos os robôs ----------
+# ---------- GET: Listar todos os robôs ---------
 @router.get("/", response_model=List[RobosSchema])
 def listar_robos(
     db: Session = Depends(get_db),
