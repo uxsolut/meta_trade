@@ -91,3 +91,18 @@ def download_robo(
         media_type="application/octet-stream",
         headers={"Content-Disposition": f"attachment; filename={robo.nome}.ex5"}
     )
+
+# ---------- DELETE: Remover robô ----------
+@router.delete("/{id}", status_code=204)
+def deletar_robo(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Proteção com JWT
+):
+    robo = db.query(Robos).filter(Robos.id == id).first()
+
+    if not robo:
+        raise HTTPException(status_code=404, detail="Robô não encontrado")
+
+    db.delete(robo)
+    db.commit()
