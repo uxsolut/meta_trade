@@ -27,8 +27,11 @@ def criar_requisicao(
         RobosDoUser.ativo == True
     ).all()
 
-    # Extrair os IDs dos robôs do usuário
-    ids_robo_user = [robo.id for robo in robos_filtrados]
+    # Extrair os IDs de contas dos robôs encontrados (caso existam)
+    ids_contas = [robo.id_conta for robo in robos_filtrados if robo.id_conta is not None]
+
+    if not ids_contas:
+        raise HTTPException(status_code=400, detail="Nenhuma conta vinculada aos robôs filtrados.")
 
     # Atualizar os robôs para indicar que têm requisição
     for robo in robos_filtrados:
@@ -42,7 +45,7 @@ def criar_requisicao(
         quantidade=requisicao.quantidade,
         preco=requisicao.preco,
         id_robo=requisicao.id_robo,
-        ids_robo_user=ids_robo_user
+        ids_contas=ids_contas  # ✅ salva os IDs de contas
     )
 
     db.add(nova_requisicao)

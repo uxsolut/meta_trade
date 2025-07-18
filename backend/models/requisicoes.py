@@ -14,7 +14,7 @@ class Requisicao(Base):
     preco = Column(Numeric(12, 2), nullable=True)
 
     id_robo = Column(Integer, ForeignKey("robos.id"), nullable=True)
-    ids_robo_user = Column(ARRAY(Integer), nullable=True)  # array de ids, FK lógica
+    ids_contas = Column(ARRAY(Integer), nullable=True)  # array de ids, FK lógica
 
     criado_em = Column(DateTime, default=datetime.utcnow)
 

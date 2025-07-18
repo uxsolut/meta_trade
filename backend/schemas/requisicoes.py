@@ -9,7 +9,7 @@ class RequisicaoCreate(BaseModel):
     quantidade: Optional[int] = None
     preco: Optional[float] = None
     id_robo: Optional[int] = None
-    ids_robo_user: Optional[List[int]] = None
+    ids_contas: Optional[List[int]] = None  
 
 class Requisicao(BaseModel):
     id: int
@@ -19,7 +19,7 @@ class Requisicao(BaseModel):
     quantidade: Optional[int] = None
     preco: Optional[float] = None
     id_robo: Optional[int] = None
-    ids_robo_user: Optional[List[int]] = None
+    ids_contas: Optional[List[int]] = None  
     criado_em: Optional[datetime] = None
 
     class Config:
