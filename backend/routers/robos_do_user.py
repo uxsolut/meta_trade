@@ -21,12 +21,12 @@ async def criar_robo_do_user(
     id_corretora: Optional[int] = Form(None),
     arquivo_cliente: UploadFile = File(None),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),  # Pega o usuário autenticado via JWT
+    current_user: User = Depends(get_current_user),  # 🔐 Pega o usuário autenticado via JWT
 ):
     conteudo = await arquivo_cliente.read() if arquivo_cliente else None
 
     novo = RobosDoUser(
-        id_user=current_user.id,  # 🔐 Preenchido automaticamente
+        id_user=current_user.id,
         id_robo=id_robo,
         ligado=ligado,
         ativo=ativo,
@@ -43,10 +43,16 @@ async def criar_robo_do_user(
 
     return novo
 
-# ---------- GET: Listar todos os robôs do user ----------
+# ---------- GET: Listar todos os robôs do user ou por id_robo_user ----------
 @router.get("/", response_model=List[RoboDoUser])
 def listar_robos_do_user(
+    id_robo_user: Optional[int] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return db.query(RobosDoUser).filter(RobosDoUser.id_user == current_user.id).all()
+    query = db.query(RobosDoUser).filter(RobosDoUser.id_user == current_user.id)
+
+    if id_robo_user is not None:
+        query = query.filter(RobosDoUser.id == id_robo_user)
+
+    return query.all()
