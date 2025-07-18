@@ -1,10 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
-from schemas.contas import Conta  # Ajuste o caminho conforme seu projeto
 
 class CarteiraBase(BaseModel):
     nome: str
-    id_conta: Optional[int] = None  # <- Aceita nulo
+    ids_contas: Optional[List[int]] = None
 
 class CarteiraCreate(CarteiraBase):
     pass
@@ -12,7 +11,6 @@ class CarteiraCreate(CarteiraBase):
 class Carteira(CarteiraBase):
     id: int
     id_user: int
-    conta: Optional[Conta] = None  # <- Objeto completo pode ser nulo
 
     class Config:
         orm_mode = True
