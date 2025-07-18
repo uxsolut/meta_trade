@@ -10,6 +10,7 @@ from auth.dependencies import get_current_user
 
 router = APIRouter(prefix="/contas", tags=["Contas"])
 
+# ---------- POST: Criar conta ----------
 @router.post("/", response_model=Conta)
 def criar_conta(
     conta: ContaCreate, 
@@ -22,6 +23,7 @@ def criar_conta(
     db.refresh(nova)
     return nova
 
+# ---------- GET: Listar todas ----------
 @router.get("/", response_model=List[Conta])
 def listar_contas(
     db: Session = Depends(get_db),
@@ -29,8 +31,9 @@ def listar_contas(
 ):
     return db.query(ContaModel).all()
 
+# ---------- GET: Buscar contas por carteira ----------
 @router.get("/carteira/{carteira_id}", response_model=List[Conta])
-def get_conta_by_carteira_id(
+def get_contas_by_carteira_id(
     carteira_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -39,12 +42,13 @@ def get_conta_by_carteira_id(
     if not carteira:
         raise HTTPException(status_code=404, detail="Carteira não encontrada")
 
-    conta = db.query(ContaModel).filter(ContaModel.id == carteira.id_conta).first()
-    if not conta:
-        raise HTTPException(status_code=404, detail="Conta não encontrada para essa carteira")
+    if not carteira.ids_contas:
+        return []
 
-    return [conta]  # retorna como lista para compatibilidade com frontend
+    contas = db.query(ContaModel).filter(ContaModel.id.in_(carteira.ids_contas)).all()
+    return contas
 
+# ---------- DELETE: Deletar conta ----------
 @router.delete("/{conta_id}")
 def deletar_conta(
     conta_id: int, 
