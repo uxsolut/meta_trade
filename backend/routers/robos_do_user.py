@@ -18,7 +18,7 @@ async def criar_robo_do_user(
     tem_requisicao: bool = Form(False),
     id_ordem: Optional[int] = Form(None),
     id_carteira: Optional[int] = Form(None),
-    id_corretora: Optional[int] = Form(None),
+    id_conta: Optional[int] = Form(None),
     arquivo_cliente: UploadFile = File(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),  # 🔐 Pega o usuário autenticado via JWT
@@ -33,7 +33,7 @@ async def criar_robo_do_user(
         tem_requisicao=tem_requisicao,
         id_ordem=id_ordem,
         id_carteira=id_carteira,
-        id_corretora=id_corretora,
+        id_conta=id_conta,
         arquivo_cliente=conteudo
     )
 

@@ -16,7 +16,7 @@ class RobosDoUser(Base):
 
     id_ordem = Column(Integer, ForeignKey("ordens.id"), nullable=True)
     id_carteira = Column(Integer, ForeignKey("carteiras.id"), nullable=True)
-    id_corretora = Column(Integer, ForeignKey("corretoras.id"), nullable=True)
+    id_conta = Column(Integer, ForeignKey("contas.id"), nullable=True)
 
     user = relationship("User", back_populates="robos_do_user")
     robo = relationship("Robos", back_populates="robos_do_user")

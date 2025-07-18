@@ -8,7 +8,7 @@ class RoboDoUserCreate(BaseModel):
     tem_requisicao: Optional[bool] = False
     id_ordem: Optional[int] = None
     id_carteira: Optional[int] = None
-    id_corretora: Optional[int] = None
+    id_conta: Optional[int] = None
 
 class RoboDoUser(BaseModel):
     id: int
@@ -19,7 +19,7 @@ class RoboDoUser(BaseModel):
     tem_requisicao: Optional[bool] = False
     id_ordem: Optional[int] = None
     id_carteira: Optional[int] = None
-    id_corretora: Optional[int] = None
+    id_conta: Optional[int] = None
 
     class Config:
         from_attributes = True 
