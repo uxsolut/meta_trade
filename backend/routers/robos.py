@@ -7,6 +7,7 @@ from io import BytesIO
 from schemas.robos import Robos as RobosSchema
 from models.robos import Robos  
 from models.users import User
+from models.robos_do_user import RobosDoUser
 from auth.dependencies import get_db, get_current_user
 
 router = APIRouter(prefix="/robos", tags=["Robos"])
@@ -19,6 +20,26 @@ def listar_robos(
 ):
     robos = db.query(Robos).all()
     return robos
+
+# ---------- GET: Listar robôs disponíveis para uma conta ----------
+@router.get("/disponiveis", response_model=List[RobosSchema])
+def listar_robos_disponiveis_para_conta(
+    conta_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # Subquery com os robôs já vinculados à conta
+    subquery = (
+        db.query(RobosDoUser.id_robo)
+        .filter(RobosDoUser.id_conta == conta_id)
+        .subquery()
+    )
+
+    # Robôs que ainda NÃO foram usados na conta
+    robos_disponiveis = db.query(Robos).filter(~Robos.id.in_(subquery)).all()
+
+    return robos_disponiveis
+
 
 # ---------- POST: Criar novo robô ----------
 @router.post("/")
