@@ -23,6 +23,15 @@ async def criar_robo_do_user(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),  # 🔐 Pega o usuário autenticado via JWT
 ):
+    # ✅ Corrigido os nomes das variáveis e a indentação
+    if id_robo is not None and id_conta is not None:
+        existente = db.query(RobosDoUser).filter_by(id_robo=id_robo, id_conta=id_conta).first()
+        if existente:
+            raise HTTPException(
+                status_code=400,
+                detail="Este robô já está vinculado a esta conta.",
+            )
+
     conteudo = await arquivo_cliente.read() if arquivo_cliente else None
 
     novo = RobosDoUser(
