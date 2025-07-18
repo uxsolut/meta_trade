@@ -8,11 +8,14 @@ class RobosBase(BaseModel):
     performance: Optional[List[str]] = None
 
 class RobosCreate(RobosBase):
-    pass
+    arquivo: bytes  
+    arquivo_user: bytes  
 
 class Robos(RobosBase):
     id: int
     criado_em: Optional[datetime] = None
+    arquivo: bytes
+    arquivo_user: bytes
 
     class Config:
         from_attributes = True

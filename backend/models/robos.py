@@ -1,4 +1,4 @@
-from sqlalchemy import (Column, Integer, String, LargeBinary, DateTime, ARRAY)
+from sqlalchemy import Column, Integer, String, LargeBinary, DateTime, ARRAY
 from database import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -10,6 +10,7 @@ class Robos(Base):
     nome = Column(String, nullable=False)
     symbol = Column(String, nullable=False)
     arquivo = Column(LargeBinary, nullable=False)
+    arquivo_user = Column(LargeBinary, nullable=False)  
     criado_em = Column(DateTime, default=datetime.utcnow)
     performance = Column(ARRAY(String))
 
