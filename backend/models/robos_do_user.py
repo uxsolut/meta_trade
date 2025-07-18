@@ -20,7 +20,12 @@ class RobosDoUser(Base):
 
     user = relationship("User", back_populates="robos_do_user")
     robo = relationship("Robos", back_populates="robos_do_user")
-    conta = relationship("Conta", back_populates="robo_user")
+    
+    conta = relationship(
+    "Conta",
+    back_populates="robo_user",
+    foreign_keys=[id_conta]  # ⬅️ ESSENCIAL para resolver a ambiguidade
+)
 
     # Especifique a FK para Ordens
     ordens = relationship(
