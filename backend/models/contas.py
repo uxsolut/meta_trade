@@ -11,7 +11,12 @@ class Conta(Base):
     conta_meta_trader = Column(String, nullable=True)
     id_corretora = Column(Integer, ForeignKey("corretoras.id", ondelete="SET NULL"))
 
-    robo_user = relationship("RobosDoUser", backref="contas")
     corretora = relationship("Corretora", back_populates="contas")
     users = relationship("User", backref="conta")
     carteiras = relationship("Carteira", back_populates="conta")
+
+    robo_user = relationship(
+      "RobosDoUser",
+      back_populates="conta",  # deve bater com o nome no outro lado
+      foreign_keys="[RobosDoUser.id_conta]"  # define explicitamente a FK
+    )
