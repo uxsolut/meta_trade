@@ -4,11 +4,25 @@ from typing import List, Optional
 
 from models.robos_do_user import RobosDoUser
 from schemas.robos_do_user import RoboDoUser
-from models.robos import Robos  # <- necessário para pegar o arquivo_user
+from models.robos import Robos
 from models.users import User
 from auth.dependencies import get_db, get_current_user
 
 router = APIRouter(prefix="/robos_do_user", tags=["Robôs do Usuário"])
+
+# ---------- GET: Listar robôs do user ----------
+@router.get("/listar", response_model=List[RoboDoUser])
+def listar_robos_do_user(
+    id_robo_user: Optional[int] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    query = db.query(RobosDoUser).filter(RobosDoUser.id_user == current_user.id)
+
+    if id_robo_user is not None:
+        query = query.filter(RobosDoUser.id == id_robo_user)
+
+    return query.all()
 
 # ---------- POST: Criar robô do user ----------
 @router.post("/", response_model=RoboDoUser)
@@ -39,7 +53,7 @@ def criar_robo_do_user(
     if not robo:
         raise HTTPException(status_code=404, detail="Robô não encontrado.")
 
-    conteudo = robo.arquivo_user  # <- conteúdo copiado diretamente
+    conteudo = robo.arquivo_user
 
     novo = RobosDoUser(
         id_user=current_user.id,
