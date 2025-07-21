@@ -4,7 +4,7 @@ from fastapi.openapi.utils import get_openapi
 from database import engine, Base
 
 from models import corretoras  
-from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens, contas  
+from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens, contas, corretoras
 
 # Criação das tabelas no banco
 Base.metadata.create_all(bind=engine)
@@ -33,6 +33,7 @@ app.include_router(robos_do_user.router)
 app.include_router(requisicoes.router)
 app.include_router(carteiras.router)
 app.include_router(contas.router)
+app.include_router(corretoras.router)
 
 # Swagger com suporte a Bearer token
 def custom_openapi():
