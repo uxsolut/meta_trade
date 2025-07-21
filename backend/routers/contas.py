@@ -42,10 +42,7 @@ def get_contas_by_carteira_id(
     if not carteira:
         raise HTTPException(status_code=404, detail="Carteira não encontrada")
 
-    if not carteira.ids_contas:
-        return []
-
-    contas = db.query(ContaModel).filter(ContaModel.id.in_(carteira.ids_contas)).all()
+    contas = db.query(ContaModel).filter(ContaModel.id_carteira == carteira_id).all()
     return contas
 
 # ---------- DELETE: Deletar conta ----------
