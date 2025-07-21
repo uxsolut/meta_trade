@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Optional
 
 class ContaBase(BaseModel):
-    id_robo_user: Optional[int]
     conta_meta_trader: Optional[str] = None
     id_corretora: Optional[int] = None
     nome: Optional[str] = None  # 👈 novo campo para exibir o nome da conta

@@ -7,15 +7,8 @@ class Conta(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, nullable=True)
-    id_robo_user = Column(Integer, ForeignKey("robos_do_user.id", ondelete="CASCADE"))
     conta_meta_trader = Column(String, nullable=True)
     id_corretora = Column(Integer, ForeignKey("corretoras.id", ondelete="SET NULL"))
 
     corretora = relationship("Corretora", back_populates="contas")
     users = relationship("User", backref="conta")
-
-    robo_user = relationship(
-        "RobosDoUser",
-        back_populates="conta",
-        foreign_keys="[RobosDoUser.id_conta]"
-    )
