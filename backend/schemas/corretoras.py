@@ -1,12 +1,20 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class Corretora(BaseModel):
-    id: int
+# Schema base compartilhado entre entrada e saída
+class CorretoraBase(BaseModel):
     nome: str
-    cnpj: Optional[str]
-    telefone: Optional[str]
-    email: Optional[str]
+    cnpj: Optional[str] = None
+    telefone: Optional[str] = None
+    email: Optional[str] = None
+
+# Schema usado no POST (entrada) — sem id
+class CorretoraCreate(CorretoraBase):
+    pass
+
+# Schema usado no GET ou POST response — com id
+class Corretora(CorretoraBase):
+    id: int
 
     class Config:
         orm_mode = True
