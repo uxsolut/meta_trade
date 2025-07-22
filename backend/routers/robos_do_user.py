@@ -14,6 +14,7 @@ router = APIRouter(prefix="/robos_do_user", tags=["Robôs do Usuário"])
 @router.get("/listar", response_model=List[RoboDoUser])
 def listar_robos_do_user(
     id_robo_user: Optional[int] = None,
+    id_conta: Optional[int] = None,  # 🔍 novo filtro aqui
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -21,6 +22,9 @@ def listar_robos_do_user(
 
     if id_robo_user is not None:
         query = query.filter(RobosDoUser.id == id_robo_user)
+    
+    if id_conta is not None:
+        query = query.filter(RobosDoUser.id_conta == id_conta)
 
     return query.all()
 
