@@ -12,6 +12,8 @@ class ContaCreate(ContaBase):
 class Conta(ContaBase):
     id: int
     id_carteira: Optional[int] = None  # ✅ aparece na resposta, mas pode ser null
+    margem_total: Optional[float] = None
+    margem_disponivel: Optional[float] = None
 
     class Config:
         orm_mode = True
