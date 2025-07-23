@@ -18,3 +18,11 @@ class Corretora(CorretoraBase):
 
     class Config:
         orm_mode = True
+
+        # Schema usado no PUT (atualização) — todos os campos opcionais
+class CorretoraUpdate(BaseModel):
+    nome: Optional[str] = None
+    cnpj: Optional[str] = None
+    telefone: Optional[str] = None
+    email: Optional[str] = None
+
