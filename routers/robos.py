@@ -10,6 +10,12 @@ from models.users import User
 from models.robos_do_user import RobosDoUser
 from auth.dependencies import get_db, get_current_user
 
+import re
+
+def sanitize_filename(nome: str) -> str:
+    """Remove caracteres inválidos para nome de arquivo"""
+    return re.sub(r'[^a-zA-Z0-9_\-]', '_', nome)
+
 router = APIRouter(prefix="/robos", tags=["Robos"])
 
 # ---------- GET: Listar todos os robôs ----------
@@ -123,7 +129,9 @@ def download_robo(
     return StreamingResponse(
         BytesIO(robo.arquivo),
         media_type="application/octet-stream",
-        headers={"Content-Disposition": f"attachment; filename={robo.nome}.ex5"}
+        headers={
+    "Content-Disposition": f'attachment; filename="arquivo_{sanitize_filename(robo.nome)}.ex5"'
+}
     )
 
 # ---------- DELETE: Remover robô ----------
