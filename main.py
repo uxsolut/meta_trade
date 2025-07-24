@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from database import engine, Base
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from models import corretoras  
 from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens, contas, corretoras
@@ -11,21 +12,20 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Configuração de CORS (liberar origens)
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Em produção, troque para o domínio do seu frontend!
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Rota raiz
+# Rotas
 @app.get("/")
 def read_root():
     return {"mensagem": "API online com sucesso!"}
 
-# Inclusão das rotas
 app.include_router(ordens.router)
 app.include_router(robos.router)
 app.include_router(users.router)          
@@ -35,7 +35,7 @@ app.include_router(carteiras.router)
 app.include_router(contas.router)
 app.include_router(corretoras.router)
 
-# Swagger com suporte a Bearer token
+# OpenAPI customizado
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
@@ -58,7 +58,10 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
-# Execução local (útil para desenvolvimento)
+# ✅ Expor métricas no /metrics (ANTES de rodar)
+Instrumentator().instrument(app).expose(app)
+
+# Execução local
 import os
 if __name__ == "__main__":
     import uvicorn
