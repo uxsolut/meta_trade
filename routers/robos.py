@@ -34,18 +34,14 @@ def listar_robos_disponiveis_para_conta(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    # Subquery com os robôs já vinculados à conta
     subquery = (
         db.query(RobosDoUser.id_robo)
         .filter(RobosDoUser.id_conta == conta_id)
         .subquery()
     )
 
-    # Robôs que ainda NÃO foram usados na conta
     robos_disponiveis = db.query(Robos).filter(~Robos.id.in_(subquery)).all()
-
     return robos_disponiveis
-
 
 # ---------- POST: Criar novo robô ----------
 @router.post("/")
@@ -54,19 +50,16 @@ async def criar_robo(
     symbol: str = Form(...),
     performance: List[str] = Form(...),
     arquivo: UploadFile = File(...),
-    arquivo_user: UploadFile = File(...),  # ✅ Novo campo obrigatório
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     conteudo = await arquivo.read()
-    conteudo_user = await arquivo_user.read()
 
     novo_robo = Robos(
         nome=nome,
         symbol=symbol,
         performance=performance,
         arquivo=conteudo,
-        arquivo_user=conteudo_user,  # ✅ Salvando novo campo
     )
 
     db.add(novo_robo)
@@ -83,7 +76,6 @@ async def atualizar_robo(
     symbol: Optional[str] = Form(None),
     performance: Optional[List[str]] = Form(None),
     arquivo: Optional[UploadFile] = File(None),
-    arquivo_user: Optional[UploadFile] = File(None),  # ✅ Novo campo opcional para atualização
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -104,10 +96,6 @@ async def atualizar_robo(
     if arquivo is not None:
         conteudo = await arquivo.read()
         robo.arquivo = conteudo
-
-    if arquivo_user is not None:
-        conteudo_user = await arquivo_user.read()
-        robo.arquivo_user = conteudo_user
 
     db.commit()
     db.refresh(robo)
@@ -130,8 +118,8 @@ def download_robo(
         BytesIO(robo.arquivo),
         media_type="application/octet-stream",
         headers={
-    "Content-Disposition": f'attachment; filename="arquivo_{sanitize_filename(robo.nome)}.ex5"'
-}
+            "Content-Disposition": f'attachment; filename="arquivo_{sanitize_filename(robo.nome)}.ex5"'
+        }
     )
 
 # ---------- DELETE: Remover robô ----------

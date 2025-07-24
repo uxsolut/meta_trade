@@ -10,7 +10,6 @@ class Robos(Base):
     nome = Column(String, nullable=False)
     symbol = Column(String, nullable=False)
     arquivo = Column(LargeBinary, nullable=False)
-    arquivo_user = Column(LargeBinary, nullable=False)  
     criado_em = Column(DateTime, default=datetime.utcnow)
     performance = Column(ARRAY(String))
 
