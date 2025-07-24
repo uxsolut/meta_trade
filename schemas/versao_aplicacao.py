@@ -4,9 +4,10 @@ from datetime import datetime
 
 class VersaoAplicacaoBase(BaseModel):
     descricao: str
+    id_aplicacao: Optional[int] = None  # ✅ novo campo
 
 class VersaoAplicacaoCreate(VersaoAplicacaoBase):
-    pass  # upload de arquivo será via `UploadFile`
+    pass  # arquivo será recebido via UploadFile no endpoint
 
 class VersaoAplicacao(VersaoAplicacaoBase):
     id: int
