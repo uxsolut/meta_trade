@@ -14,4 +14,4 @@ class VersaoAplicacao(Base):
     criado_em = Column(DateTime, server_default=func.current_timestamp())
 
     # Relacionamento (opcional)
-    aplicacao = relationship("Aplicacao", backref="versoes")
+    aplicacao = relationship("Aplicacao", backref="versoes", foreign_keys=[id_aplicacao])
