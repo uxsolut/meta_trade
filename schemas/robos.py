@@ -8,7 +8,7 @@ class RobosBase(BaseModel):
     performance: Optional[List[str]] = None
 
 class RobosCreate(RobosBase):
-    arquivo: bytes
+    pass
 
 class Robos(RobosBase):
     id: int
