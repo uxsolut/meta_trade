@@ -5,7 +5,7 @@ from database import engine, Base
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from models import corretoras  
-from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens, contas, corretoras
+from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens, contas, corretoras, aplicacao
 
 # Criação das tabelas no banco
 Base.metadata.create_all(bind=engine)
@@ -34,6 +34,7 @@ app.include_router(requisicoes.router)
 app.include_router(carteiras.router)
 app.include_router(contas.router)
 app.include_router(corretoras.router)
+app.include_router(aplicacao.router)
 
 # OpenAPI customizado
 def custom_openapi():
