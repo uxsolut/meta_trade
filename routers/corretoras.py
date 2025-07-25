@@ -17,7 +17,7 @@ def listar_corretoras(
 ):
     return db.query(CorretoraModel).all()
 
-# ---------- POST: Criar nova corretora ----------
+# ---------- POST: Criar nova corretora ---------
 @router.post("/", response_model=Corretora)
 def criar_corretora(
     corretora: CorretoraCreate,
