@@ -5,7 +5,7 @@ from typing import Optional
 class AplicacaoBase(BaseModel):
     nome: str
     tipo: str
-    id_versao_aplicacao: int
+    id_versao_aplicacao: Optional[int] = None
 
 class AplicacaoCreate(AplicacaoBase):
     pass
