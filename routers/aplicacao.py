@@ -25,12 +25,12 @@ def criar_aplicacao(
     db.refresh(nova)
     return nova
 
-# ---------- PUT: Atualizar campo id_versao_aplicacao + atualizar nome ----------
+# ---------- PUT: Atualizar campos ----------
 @router.put("/{id}", response_model=Aplicacao)
 def atualizar_aplicacao(
     id: int = Path(...),
     id_versao_aplicacao: Optional[int] = None,
-    id_projeto: Optional[int] = None,  # ✅ Novo campo
+    id_projeto: Optional[int] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -38,21 +38,17 @@ def atualizar_aplicacao(
     if not app:
         raise HTTPException(status_code=404, detail="Aplicação não encontrada")
 
-    # Atualizar o ID da versão, se for enviado
     if id_versao_aplicacao is not None:
         app.id_versao_aplicacao = id_versao_aplicacao
 
-    # ✅ Atualizar o ID do projeto, se for enviado
     if id_projeto is not None:
         app.id_projeto = id_projeto
 
-    # Contar quantas versões estão associadas a esta aplicação
     total_versoes = db.query(func.count()).select_from(VersaoAplicacao).filter(
         VersaoAplicacao.id_aplicacao == app.id
     ).scalar()
 
-    # Atualizar o nome da aplicação com sufixo " - N"
-    nome_base = app.nome.split(" - ")[0].strip()  # remove o antigo sufixo, se houver
+    nome_base = app.nome.split(" - ")[0].strip()
     app.nome = f"{nome_base} - {total_versoes}"
 
     db.commit()

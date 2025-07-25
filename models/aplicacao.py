@@ -3,7 +3,8 @@ from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
 from database import Base
 
-tipo_aplicacao_enum = ENUM('backend', 'frontend', name='tipo_aplicacao', create_type=False)
+# Atualizando o ENUM com o novo valor 'robo'
+tipo_aplicacao_enum = ENUM('backend', 'frontend', 'robo', name='tipo_aplicacao', create_type=False)
 
 class Aplicacao(Base):
     __tablename__ = "aplicacao"
@@ -13,7 +14,7 @@ class Aplicacao(Base):
     tipo = Column(tipo_aplicacao_enum, nullable=False)
 
     id_versao_aplicacao = Column(Integer, ForeignKey("versao_aplicacao.id"), nullable=False)
-    id_projeto = Column(Integer, ForeignKey("projetos.id"), nullable=True)
+    id_projeto = Column(Integer, ForeignKey("projetos.id", ondelete="SET NULL"), nullable=True)
 
     criado_em = Column(DateTime, server_default=func.current_timestamp())
     atualizado_em = Column(DateTime, server_default=func.current_timestamp(), onupdate=func.current_timestamp())

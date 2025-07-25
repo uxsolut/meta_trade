@@ -36,6 +36,7 @@ app.include_router(contas.router)
 app.include_router(corretoras.router)
 app.include_router(aplicacao.router)
 app.include_router(versao_aplicacao.router)
+app.include_router(projeto.router)
 
 # OpenAPI customizado
 def custom_openapi():

@@ -17,4 +17,4 @@ class Aplicacao(AplicacaoBase):
     atualizado_em: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        orm_mode = True  # ✅ manter isso para compatibilidade
