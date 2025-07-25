@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from database import get_db
 from auth.dependencies import get_current_user
 from models.aplicacao import Aplicacao as AplicacaoModel
+from models.versao_aplicacao import VersaoAplicacao
 from schemas.aplicacao import Aplicacao, AplicacaoCreate
 from models.users import User
 from typing import Optional
@@ -23,7 +25,7 @@ def criar_aplicacao(
     db.refresh(nova)
     return nova
 
-# ---------- PUT: Atualizar campo id_versao_aplicacao ----------
+# ---------- PUT: Atualizar campo id_versao_aplicacao + atualizar nome ----------
 @router.put("/{id}", response_model=Aplicacao)
 def atualizar_aplicacao(
     id: int = Path(...),
@@ -35,8 +37,18 @@ def atualizar_aplicacao(
     if not app:
         raise HTTPException(status_code=404, detail="Aplicação não encontrada")
 
+    # Atualizar o ID da versão, se for enviado
     if id_versao_aplicacao is not None:
         app.id_versao_aplicacao = id_versao_aplicacao
+
+    # Contar quantas versões estão associadas a esta aplicação
+    total_versoes = db.query(func.count()).select_from(VersaoAplicacao).filter(
+        VersaoAplicacao.id_aplicacao == app.id
+    ).scalar()
+
+    # Atualizar o nome da aplicação com sufixo " - N"
+    nome_base = app.nome.split(" - ")[0].strip()  # remove o antigo sufixo, se houver
+    app.nome = f"{nome_base} - {total_versoes}"
 
     db.commit()
     db.refresh(app)
