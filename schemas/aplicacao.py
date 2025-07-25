@@ -6,6 +6,7 @@ class AplicacaoBase(BaseModel):
     nome: str
     tipo: str
     id_versao_aplicacao: Optional[int] = None
+    id_projeto: Optional[int] = None
 
 class AplicacaoCreate(AplicacaoBase):
     pass

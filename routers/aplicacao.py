@@ -30,6 +30,7 @@ def criar_aplicacao(
 def atualizar_aplicacao(
     id: int = Path(...),
     id_versao_aplicacao: Optional[int] = None,
+    id_projeto: Optional[int] = None,  # ✅ Novo campo
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -40,6 +41,10 @@ def atualizar_aplicacao(
     # Atualizar o ID da versão, se for enviado
     if id_versao_aplicacao is not None:
         app.id_versao_aplicacao = id_versao_aplicacao
+
+    # ✅ Atualizar o ID do projeto, se for enviado
+    if id_projeto is not None:
+        app.id_projeto = id_projeto
 
     # Contar quantas versões estão associadas a esta aplicação
     total_versoes = db.query(func.count()).select_from(VersaoAplicacao).filter(
