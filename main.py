@@ -5,7 +5,7 @@ from database import engine, Base
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from models import corretoras  
-from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens, contas, corretoras, aplicacao, versao_aplicacao
+from routers import robos, users, robos_do_user, requisicoes, carteiras, ordens, contas, corretoras, aplicacao, versao_aplicacao, projeto
 
 # Criação das tabelas no banco
 Base.metadata.create_all(bind=engine)
